@@ -82,8 +82,14 @@
         {
             // Create query
             $query = 'UPDATE ' . $this->table . '
-                                SET plan_name = :plan_name, bandwidth = :bandwidth, price = :price, rate_per_minute = (SELECT plan_compute_rpm(:price)), created_at = current_timestamp(), promo_id = :promo_id, plan_status_id = :plan_status_id
-                                WHERE plan_id = :plan_id';
+                    SET plan_name = :plan_name, 
+                        bandwidth = :bandwidth, 
+                        price = :price, 
+                        rate_per_minute = plan_compute_rpm(:price), 
+                        created_at = current_timestamp(), 
+                        promo_id = :promo_id, 
+                        plan_status_id = :plan_status_id
+                    WHERE plan_id = :plan_id';
     
             // Prepare statement
             $stmt = $this->conn->prepare($query);

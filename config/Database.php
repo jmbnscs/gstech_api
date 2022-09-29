@@ -2,8 +2,8 @@
     class Database 
     {
         // DB Params
-        private $host = 'localhost:3307';
-        private $db_name = 'gstech_bms_db_fk';
+        private $host = 'localhost';
+        private $db_name = 'gstech_bms_db_fk_1';
         private $username = 'root';
         private $password = '';
         private $conn;
