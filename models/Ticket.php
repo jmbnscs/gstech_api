@@ -35,14 +35,84 @@
         }
 
         # Update Ticket
-        public function update()
+        public function update() 
         {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET ticket_num = :ticket_num,
+                        concern_id = :concern_id, 
+                        concern_details = :concern_details, 
+                        date_filed = :date_filed, 
+                        date_resolved = :date_resolved,
+                        resolution_details = :resolution_details, 
+                        ticket_status_id = :ticket_status_id,
+                        account_id = :account_id, 
+                        admin_id = :admin_id
+                    WHERE ticket_id = :ticket_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->ticket_id = htmlspecialchars(strip_tags($this->ticket_id));
+            $this->ticket_num = htmlspecialchars(strip_tags($this->ticket_num));
+            $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
+            $this->concern_details = htmlspecialchars(strip_tags($this->concern_details));
+            $this->date_filed = htmlspecialchars(strip_tags($this->date_filed));
+            $this->date_resolved = htmlspecialchars(strip_tags($this->date_resolved));
+            $this->resolution_details = htmlspecialchars(strip_tags($this->resolution_details));
+            $this->ticket_status_id = htmlspecialchars(strip_tags($this->ticket_status_id));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+    
+            // Bind data
+            $stmt->bindParam(':ticket_id', $this->ticket_id);
+            $stmt->bindParam(':ticket_num', $this->ticket_num);
+            $stmt->bindParam(':concern_id', $this->concern_id);
+            $stmt->bindParam(':concern_details', $this->concern_details);
+            $stmt->bindParam(':date_filed', $this->date_filed);
+            $stmt->bindParam(':date_resolved', $this->date_resolved);
+            $stmt->bindParam(':resolution_details', $this->resolution_details);
+            $stmt->bindParam(':ticket_status_id', $this->ticket_status_id);
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':admin_id', $this->admin_id);
 
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Ticket
         public function delete()
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE ticket_id = :ticket_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->ticket_id = htmlspecialchars(strip_tags($this->ticket_id));
+
+            // Bind data
+            $stmt->bindParam(':ticket_id', $this->ticket_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
