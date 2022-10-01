@@ -42,7 +42,7 @@
         }
 
         # Update Invoice
-        public function update()
+        public function update() 
         {
 
         }
