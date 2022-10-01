@@ -15,15 +15,52 @@
         }
 
         # Create Post
-        public function create()
+        public function create ()
         {
+            // Create Query
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    user_role = :user_role';
 
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean Data
+            $this->user_role = htmlspecialchars(strip_tags($this->user_role));
+
+            // Bind Data
+            $stmt->bindParam(':user_role', $this->user_role);
+
+            // Execute Query
+            if ($stmt->execute())
+            {
+                return true;
+            }
+            else
+            {
+                // Print error if something goes wrong
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
 
         # Get UserLevel 
         public function read()
         {
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table;
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
 
+            $stmt->execute();
+
+            return $stmt;
         }
 
         # Update UserLevel

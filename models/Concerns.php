@@ -7,7 +7,7 @@
         # Properties
         public $concern_id;
         public $concern_category;
-        public $admin_access;
+        public $technical_support_access;
         public $customer_access;
 
         # Constructor with DB
@@ -29,14 +29,66 @@
         }
 
         # Update Concerns
-        public function update()
+        public function update() 
         {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET concern_category = :concern_category, 
+                        technical_support_access = :technical_support_access, 
+                        customer_access = :customer_access
+                    WHERE concern_id = :concern_id';
 
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->concern_category = htmlspecialchars(strip_tags($this->concern_category));
+            $this->technical_support_access = htmlspecialchars(strip_tags($this->technical_support_access));
+            $this->customer_access = htmlspecialchars(strip_tags($this->customer_access));
+            $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
+    
+            // Bind data
+            $stmt->bindParam(':concern_category', $this->concern_category);
+            $stmt->bindParam(':technical_support_access', $this->technical_support_access);
+            $stmt->bindParam(':customer_access', $this->customer_access);
+            $stmt->bindParam(':concern_id', $this->concern_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Concerns
-        public function delete()
+        public function delete() 
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE concern_id = :concern_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
+
+            // Bind data
+            $stmt->bindParam(':concern_id', $this->concern_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
