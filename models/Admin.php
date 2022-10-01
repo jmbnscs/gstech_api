@@ -105,15 +105,103 @@
         }
 
         # Update Admin
-        public function update()
+        public function update() 
         {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET admin_email = :admin_email, 
+                        mobile_number = :mobile_number, 
+                        address = :address,
+                        admin_status_id = :admin_status_id, 
+                        user_level_id = :user_level_id
+                    WHERE admin_id = :admin_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->admin_email = htmlspecialchars(strip_tags($this->admin_email));
+            $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
+            $this->address = htmlspecialchars(strip_tags($this->address));
+            $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
+            $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+    
+            // Bind data
+            $stmt->bindParam(':admin_email', $this->admin_email);
+            $stmt->bindParam(':mobile_number', $this->mobile_number);
+            $stmt->bindParam(':address', $this->address);
+            $stmt->bindParam(':admin_status_id', $this->admin_status_id);
+            $stmt->bindParam(':user_level_id', $this->user_level_id);
+            $stmt->bindParam(':admin_id', $this->admin_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
 
+        public function update_status() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET admin_status_id = :admin_status_id
+                    WHERE admin_id = :admin_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+    
+            // Bind data
+            $stmt->bindParam(':admin_status_id', $this->admin_status_id);
+            $stmt->bindParam(':admin_id', $this->admin_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Admin
-        public function delete()
+        public function delete() 
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE admin_id = :admin_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+
+            // Bind data
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
 
         public function isAdminIDExists ($admin_id)

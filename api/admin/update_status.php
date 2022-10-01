@@ -1,9 +1,9 @@
-<?php 
+<?php
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
-    header('Access-Control-Allow-Methods: DELETE');
-    header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
+    header('Access-Control-Allow-Methods: PUT');
+    header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Methods, Authorization,X-Requested-With');
 
     include_once '../../config/Database.php';
     include_once '../../models/Admin.php';
@@ -12,23 +12,24 @@
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate Admin object
+    // Instantiate admin object
     $admin = new Admin($db);
 
     // Get raw data
     $data = json_decode(file_get_contents("php://input"));
 
-    // Set ID to Delete
+    // ID to Update
     $admin->admin_id = $data->admin_id;
 
-    // Delete Admin
-    if($admin->delete()) {
+    $admin->admin_status_id = $data->admin_status_id;
+
+    // Update admin
+    if($admin->update_status()) {
         echo json_encode(
-        array('message' => 'Admin Deleted')
+            array('message' => 'Admin Updated')
     );
     } else {
         echo json_encode(
-        array('message' => 'Admin Not Deleted')
-    );
+            array('message' => 'Admin not updated')
+        );
     }
-
