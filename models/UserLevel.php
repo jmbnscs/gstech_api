@@ -64,14 +64,60 @@
         }
 
         # Update UserLevel
-        public function update()
+        public function update() 
         {
-
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET user_role = :user_role
+                    WHERE user_id = :user_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->user_role = htmlspecialchars(strip_tags($this->user_role));
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+    
+            // Bind data
+            $stmt->bindParam(':user_role', $this->user_role);
+            $stmt->bindParam(':user_id', $this->user_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete UserLevel
-        public function delete()
+        public function delete() 
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE user_id = :user_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+            // Bind data
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
