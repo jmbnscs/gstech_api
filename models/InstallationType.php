@@ -65,14 +65,60 @@
         }
 
         # Update InstallationType
-        public function update()
+        public function update() 
         {
-
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET install_type_name = :install_type_name
+                    WHERE install_type_id = :install_type_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->install_type_name = htmlspecialchars(strip_tags($this->install_type_name));
+            $this->install_type_id = htmlspecialchars(strip_tags($this->install_type_id));
+    
+            // Bind data
+            $stmt->bindParam(':install_type_name', $this->install_type_name);
+            $stmt->bindParam(':install_type_id', $this->install_type_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete InstallationType
-        public function delete()
+        public function delete() 
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE install_type_id = :install_type_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->install_type_id = htmlspecialchars(strip_tags($this->install_type_id));
+
+            // Bind data
+            $stmt->bindParam(':install_type_id', $this->install_type_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
