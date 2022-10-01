@@ -49,6 +49,6 @@
     {
         // No Categories
         echo json_encode(
-            array('message' => 'No Plans Found')
+            array('message' => 'No Installation Record Found')
         );
     }

@@ -80,6 +80,32 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->install_type_id = $row['install_type_id'];
+            $this->installation_total_charge = $row['installation_total_charge'];
+            $this->installation_balance = $row['installation_balance'];
+            $this->installment = $row['installment'];
+            $this->account_id = $row['account_id'];
+            $this->installation_status_id = $row['installation_status_id'];
+        }
+
         # Update Installation
         public function update() 
         {
