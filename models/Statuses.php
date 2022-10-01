@@ -19,15 +19,59 @@
         }
 
         # Create Post
-        public function create()
+        public function create ()
         {
+            // Set table name
+            $this->table = $this->status_table;
 
+            // Create Query
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    status_name = :status_name';
+
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean Data
+            $this->status_table = htmlspecialchars(strip_tags($this->status_table));
+            $this->status_name = htmlspecialchars(strip_tags($this->status_name));
+
+            // Bind Data
+            $stmt->bindParam(':status_name', $this->status_name);
+
+            // Execute Query
+            if ($stmt->execute())
+            {
+                return true;
+            }
+            else
+            {
+                // Print error if something goes wrong
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
 
         # Get Statuses 
         public function read()
         {
+            // Set table name
+            $this->table = $this->status_table;
 
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table;
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
         }
 
         # Update Statuses
