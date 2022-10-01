@@ -31,14 +31,67 @@
         }
 
         # Update Statuses
-        public function update()
+        public function update() 
         {
+            // Clean data
+            $this->status_table = htmlspecialchars(strip_tags($this->status_table));
+            $this->status_name = htmlspecialchars(strip_tags($this->status_name));
+            $this->status_id = htmlspecialchars(strip_tags($this->status_id));
+    
+            // Set table name
+            $this->table = $this->status_table;
 
+            // Create query
+            $query = 'UPDATE ' . $this->table . ' 
+                    SET status_name = :status_name
+                    WHERE status_id = :status_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Bind data
+            $stmt->bindParam(':status_name', $this->status_name);
+            $stmt->bindParam(':status_id', $this->status_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Statuses
         public function delete()
         {
-            
+            // Clean data
+            $this->status_table = htmlspecialchars(strip_tags($this->status_table));
+            $this->status_id = htmlspecialchars(strip_tags($this->status_id));
+
+            $this->table = $this->status_table;
+
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE status_id = :status_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Bind data
+            $stmt->bindParam(':status_id', $this->status_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
