@@ -75,14 +75,69 @@
         }
 
         # Update Prorate
-        public function update()
+        public function update() 
         {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET duration = :duration, 
+                        rate_per_minute = (SELECT rate_per_minute FROM plan WHERE plan_id = (SELECT plan_id FROM account WHERE account_id = :account_id)), 
+                        prorate_charge = prorate_gen_prorate_charge(:duration, rate_per_minute), 
+                        account_id = :account_id
+                    WHERE prorate_id = :prorate_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
             
+            // Clean data
+            $this->duration = htmlspecialchars(strip_tags($this->duration));
+            $this->rate_per_minute = htmlspecialchars(strip_tags($this->rate_per_minute));
+            $this->prorate_charge = htmlspecialchars(strip_tags($this->prorate_charge));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->prorate_id = htmlspecialchars(strip_tags($this->prorate_id));
+    
+            // Bind data
+            $stmt->bindParam(':duration', $this->duration);
+            $stmt->bindParam(':rate_per_minute', $this->rate_per_minute);
+            $stmt->bindParam(':prorate_charge', $this->prorate_charge);
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':prorate_id', $this->prorate_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Prorate
-        public function delete()
+        public function delete() 
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE prorate_id = :prorate_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->prorate_id = htmlspecialchars(strip_tags($this->prorate_id));
+
+            // Bind data
+            $stmt->bindParam(':prorate_id', $this->prorate_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
