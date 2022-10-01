@@ -25,13 +25,92 @@
         # Create Post
         public function create()
         {
+            // Create Query
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    ticket_num = ticket_gen_ticket_num(),
+                    concern_id = :concern_id,
+                    concern_details = :concern_details,
+                    date_filed = :date_filed,
+                    ticket_status_id = :ticket_status_id,
+                    account_id = :account_id';
 
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean Data
+            $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
+            $this->concern_details = htmlspecialchars(strip_tags($this->concern_details));
+            $this->date_filed = htmlspecialchars(strip_tags($this->date_filed));
+            $this->ticket_status_id = htmlspecialchars(strip_tags($this->ticket_status_id));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            // Bind Data
+            $stmt->bindParam(':concern_id', $this->concern_id);
+            $stmt->bindParam(':concern_details', $this->concern_details);
+            $stmt->bindParam(':date_filed', $this->date_filed);
+            $stmt->bindParam(':ticket_status_id', $this->ticket_status_id);
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute Query
+            if ($stmt->execute())
+            {
+                return true;
+            }
+            else
+            {
+                // Print error if something goes wrong
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
 
         # Get Ticket 
         public function read()
         {
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table;
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
 
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                ticket_num = :ticket_num';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':ticket_num', $this->ticket_num);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->ticket_num = $row['ticket_num'];
+            $this->concern_id = $row['concern_id'];
+            $this->concern_details = $row['concern_details'];
+            $this->date_filed = $row['date_filed'];
+            $this->date_resolved = $row['date_resolved'];
+            $this->resolution_details = $row['resolution_details'];
+            $this->ticket_status_id = $row['ticket_status_id'];
+            $this->account_id = $row['account_id'];
+            $this->admin_id = $row['admin_id'];
         }
 
         # Update Ticket
