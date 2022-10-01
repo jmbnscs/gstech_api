@@ -99,12 +99,64 @@
         # Update Customer
         public function update()
         {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET billing_address = :billing_address, 
+                        mobile_number = :mobile_number, 
+                        email = :email
+                    WHERE account_id = :account_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
 
+            // Clean data
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->billing_address = htmlspecialchars(strip_tags($this->billing_address));
+            $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
+            $this->email = htmlspecialchars(strip_tags($this->email));
+
+            // Bind data
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':billing_address', $this->billing_address);
+            $stmt->bindParam(':mobile_number', $this->mobile_number);
+            $stmt->bindParam(':email', $this->email);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Customer
         public function delete()
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE account_id = :account_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            // Bind data
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
