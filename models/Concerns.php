@@ -17,15 +17,58 @@
         }
 
         # Create Post
-        public function create()
+        public function create ()
         {
+            // Create Query
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    concern_category = :concern_category,
+                    technical_support_access = :technical_support_access,
+                    customer_access = :customer_access';
 
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean Data
+            $this->concern_category = htmlspecialchars(strip_tags($this->concern_category));
+            $this->technical_support_access = htmlspecialchars(strip_tags($this->technical_support_access));
+            $this->customer_access = htmlspecialchars(strip_tags($this->customer_access));
+
+            // Bind Data
+            $stmt->bindParam(':concern_category', $this->concern_category);
+            $stmt->bindParam(':technical_support_access', $this->technical_support_access);
+            $stmt->bindParam(':customer_access', $this->customer_access);
+
+            // Execute Query
+            if ($stmt->execute())
+            {
+                return true;
+            }
+            else
+            {
+                // Print error if something goes wrong
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
 
         # Get Concerns 
         public function read()
         {
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table;
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
 
+            $stmt->execute();
+
+            return $stmt;
         }
 
         # Update Concerns
