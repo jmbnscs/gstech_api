@@ -64,14 +64,60 @@
         }
 
         # Update Area
-        public function update()
+        public function update() 
         {
-
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET area_name = :area_name
+                    WHERE area_id = :area_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->area_name = htmlspecialchars(strip_tags($this->area_name));
+            $this->area_id = htmlspecialchars(strip_tags($this->area_id));
+    
+            // Bind data
+            $stmt->bindParam(':area_name', $this->area_name);
+            $stmt->bindParam(':area_id', $this->area_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
         }
 
         # Delete Area
-        public function delete()
+        public function delete() 
         {
-            
+            // Create query
+            $query = 'DELETE FROM ' . $this->table . ' WHERE area_id = :area_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->area_id = htmlspecialchars(strip_tags($this->area_id));
+
+            // Bind data
+            $stmt->bindParam(':area_id', $this->area_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
     }
