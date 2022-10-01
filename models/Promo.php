@@ -16,15 +16,55 @@
         }
 
         # Create Post
-        public function create()
+        public function create ()
         {
+            // Create Query
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    netflix = :netflix,
+                    fiber_switch = :fiber_switch';
 
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean Data
+            $this->netflix = htmlspecialchars(strip_tags($this->netflix));
+            $this->fiber_switch = htmlspecialchars(strip_tags($this->fiber_switch));
+
+            // Bind Data
+            $stmt->bindParam(':netflix', $this->netflix);
+            $stmt->bindParam(':fiber_switch', $this->fiber_switch);
+
+            // Execute Query
+            if ($stmt->execute())
+            {
+                return true;
+            }
+            else
+            {
+                // Print error if something goes wrong
+                printf("Error: %s.\n", $stmt->error);
+
+                return false;
+            }
         }
 
         # Get Promo 
         public function read()
         {
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table;
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
 
+            $stmt->execute();
+
+            return $stmt;
         }
 
         # Update Promo
