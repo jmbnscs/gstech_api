@@ -38,7 +38,7 @@
                     installation_balance = :installation_balance,
                     installment = :installment,
                     account_id = :account_id,
-                    installation_status_id = :installation_status_id,';
+                    installation_status_id = :installation_status_id';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
