@@ -19,7 +19,7 @@
     $data = json_decode(file_get_contents("php://input"));
 
     // Set ID to Delete
-    $ticket->ticket_id = $data->ticket_id;
+    $ticket->ticket_num = $data->ticket_num;
 
     // Delete Ticket
     if($ticket->delete()) {
