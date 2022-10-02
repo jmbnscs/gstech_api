@@ -19,16 +19,11 @@
     $data = json_decode(file_get_contents("php://input"));
 
     // ID to Update
-    $ticket->ticket_id = $data->ticket_id;
-
     $ticket->ticket_num = $data->ticket_num;
-    $ticket->concern_id = $data->concern_id;
-    $ticket->concern_details = $data->concern_details;
-    $ticket->date_filed = $data->date_filed;
+    
     $ticket->date_resolved = $data->date_resolved;
     $ticket->resolution_details = $data->resolution_details;
     $ticket->ticket_status_id = $data->ticket_status_id;
-    $ticket->account_id = $data->account_id;
     $ticket->admin_id = $data->admin_id;
 
     // Update ticket
