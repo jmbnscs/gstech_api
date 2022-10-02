@@ -19,7 +19,7 @@
     $data = json_decode(file_get_contents("php://input"));
 
     // Set ID to Delete
-    $installation->installation_id = $data->installation_id;
+    $installation->account_id = $data->account_id;
 
     // Delete Installation
     if($installation->delete()) {
