@@ -13,8 +13,11 @@
     // Instantiate Invoice object
     $invoice = new Invoice ($db);
 
+    // GET ID
+    $invoice->account_id = isset($_GET['account_id']) ? $_GET['account_id'] : die();
+
     // Invoice Read Query
-    $result = $invoice->read();
+    $result = $invoice->read_single_account();
 
     // Get row count
     $num = $result->rowCount();
