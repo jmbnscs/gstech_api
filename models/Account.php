@@ -26,7 +26,7 @@
         public function create()
         {
             // Clean Data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            // $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->start_date = htmlspecialchars(strip_tags($this->start_date));
             $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
             $this->connection_id = htmlspecialchars(strip_tags($this->connection_id));
@@ -37,7 +37,7 @@
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
-                    account_id = :account_id,
+                    account_id = account_gen_id(),
                     start_date = :start_date, 
                     lockin_end_date = :lockin_end_date, 
                     billing_day = :billing_day,
@@ -54,7 +54,7 @@
             $this->setDates();
 
             // Bind data
-            $stmt->bindParam(':account_id', $this->account_id);
+            // $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':start_date', $this->start_date);
             $stmt->bindParam(':lockin_end_date', $this->lockin_end_date);
             $stmt->bindParam(':billing_day', $this->billing_day);

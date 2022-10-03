@@ -18,7 +18,7 @@
     // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
-    $account->account_id = $data->account_id;
+    // $account->account_id = $data->account_id;
 
     $account->start_date = $data->start_date;
     $account->plan_id = $data->plan_id;
