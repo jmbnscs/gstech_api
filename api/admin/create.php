@@ -18,7 +18,7 @@
     // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
-    $admin->admin_id = $admin->generateAdminID();
+    // $admin->admin_id = $admin->generateAdminID();
     $admin->admin_email = $data->admin_email;
     $admin->mobile_number = $data->mobile_number;
     $admin->first_name = $data->first_name;
