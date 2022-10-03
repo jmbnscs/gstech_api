@@ -1,4 +1,4 @@
-    <?php
+<?php
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
@@ -19,15 +19,16 @@
     $data = json_decode(file_get_contents("php://input"));
 
     // ID to Update
-    $invoice->account_id = $data->account_id;
-    
-    $invoice->payment_reference_id = $data->payment_reference_id;
-    $invoice->amount_paid = $data->amount_paid;
+    $invoice->invoice_id = $data->invoice_id;
 
-    // Update Invoice
-    if($invoice->update()) {
+    $invoice->invoice_status_id = $data->invoice_status_id;
+
+    // Update invoice
+    if($invoice->update_status()) {
         echo json_encode(
-            array('message' => 'Invoice Updated')
+            array('message' => 'Invoice Updated',
+            'invoice_id' => $invoice->invoice_id,
+            'invoice_status_id' => $invoice->invoice_status_id)
     );
     } else {
         echo json_encode(
