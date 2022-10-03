@@ -170,63 +170,34 @@
         public function update() 
         {
             // Clean data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
+            $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
 
-            $this->setPreviousDates();
-            $this->setPreviousInfo();
-            $this->setSubAmtAndInstallCharge();
-            $this->getPreviousProrate();
-            $this->getPreviousTotalBill();
-            $this->setInvoiceID();
+            #set invoice_status_id
 
-            $query = 'INSERT INTO ' . 
-                    $this->table . '
-                SET
-                    invoice_id = :invoice_id,
-                    account_id = :account_id,
-                    billing_period_start = :billing_period_start,
-                    billing_period_end = :billing_period_end,
-                    disconnection_date = :disconnection_date,
-                    previous_bill = :previous_bill,
-                    previous_payment = :previous_payment,
-                    balance = :balance,
-                    secured_cash = :secured_cash,
-                    subscription_amount = :subscription_amount,
-                    prorated_charge = :prorated_charge,
-                    installation_charge = :installation_charge,
-                    total_bill = :total_bill,
-                    invoice_status_id = 1,
+            $query = 'UPDATE ' . $this->table . '
+                SET invoice_status_id = :invoice_status_id,
                     payment_reference_id = :payment_reference_id,
                     amount_paid = :amount_paid,
-                    payment_date = current_date()';
-    
+                    payment_date = :payment_date
+                WHERE invoice_id = :invoice_id';
+
             // Prepare statement
             $stmt = $this->conn->prepare($query);
-                         
+
             // Bind data
             $stmt->bindParam(':invoice_id', $this->invoice_id);
-            $stmt->bindParam(':account_id', $this->account_id);
-            $stmt->bindParam(':billing_period_start', $this->billing_period_start);
-            $stmt->bindParam(':billing_period_end', $this->billing_period_end);
-            $stmt->bindParam(':disconnection_date', $this->disconnection_date);
-            $stmt->bindParam(':previous_bill', $this->previous_bill);
-            $stmt->bindParam(':previous_payment', $this->previous_payment);
-            $stmt->bindParam(':balance', $this->balance);
-            $stmt->bindParam(':secured_cash', $this->secured_cash);
-            $stmt->bindParam(':subscription_amount', $this->subscription_amount);
-            $stmt->bindParam(':prorated_charge', $this->prorated_charge);
-            $stmt->bindParam(':installation_charge', $this->installation_charge);
-            $stmt->bindParam(':total_bill', $this->total_bill);
+            $stmt->bindParam(':invoice_status_id', $this->invoice_status_id);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
             $stmt->bindParam(':amount_paid', $this->amount_paid);
+            $stmt->bindParam(':payment_date', $this->payment_date);
 
-    
             // Execute query
             if($stmt->execute()) {
-                #$this->addBillCount();
-                $this->updateInstallation();
+                // $this->setInvoiceStatus(); -- in progress yung procedure
+                // $this->updateInstallation();
                 return true;
             }
             else {
@@ -607,79 +578,5 @@
             $stmt->execute();
 
             $stmt->closeCursor();
-        }
-
-        private function setPreviousDates()
-        {
-            // Create query
-            $query = 'CALL invoice_set_previous_dates (:account_id, @temp_start, @temp_end, @temp_disconnection)';
-
-            // Prepare statement
-            $stmt = $this->conn->prepare($query);
-
-            // Clean data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
-
-            // Bind data
-            $stmt->bindParam(':account_id', $this->account_id);
-
-            // Execute query
-            $stmt->execute();
-
-            $stmt->closeCursor();
-
-            $row = $this->conn->query("SELECT @temp_start AS billing_period_start, @temp_end AS billing_period_end, @temp_disconnection AS disconnection_date")->fetch(PDO::FETCH_ASSOC);
-
-            $this->billing_period_start = $row['billing_period_start'];
-            $this->billing_period_end = $row['billing_period_end'];
-            $this->disconnection_date = $row['disconnection_date'];
-        }
-
-        private function getPreviousTotalBill()
-        {
-            // Create query
-            $query = 'CALL invoice_get_previous_total_bill (:account_id, @total)';
-
-            // Prepare statement
-            $stmt = $this->conn->prepare($query);
-
-            // Clean data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
-
-            // Bind data
-            $stmt->bindParam(':account_id', $this->account_id);
-
-            // Execute query
-            $stmt->execute();
-
-            $stmt->closeCursor();
-
-            $row = $this->conn->query("SELECT @total AS total_bill")->fetch(PDO::FETCH_ASSOC);
-
-            $this->total_bill = $row['total_bill'];
-        }
-
-        private function getPreviousProrate()
-        {
-            // Create query
-            $query = 'CALL invoice_get_previous_prorate (:account_id, @prorate)';
-
-            // Prepare statement
-            $stmt = $this->conn->prepare($query);
-
-            // Clean data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
-
-            // Bind data
-            $stmt->bindParam(':account_id', $this->account_id);
-
-            // Execute query
-            $stmt->execute();
-
-            $stmt->closeCursor();
-
-            $row = $this->conn->query("SELECT @prorate AS prorated_charge")->fetch(PDO::FETCH_ASSOC);
-
-            $this->prorated_charge = $row['prorated_charge'];
         }
     }
