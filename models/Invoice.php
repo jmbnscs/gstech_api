@@ -387,10 +387,18 @@
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Set Properties
-            $this->subscription_amount = $row['subscription_amount'];
+            $this->subscription_amount = $row['price'];
             $bill_count = $this->fetchBillCount();
 
-            ($bill_count < 6) ? $this->installation_charge = 200 : $this->installation_charge = 0;
+            if ($row['install_type_id'] === 2)
+            {
+                ($bill_count < 6) ? $this->installation_charge = 200 : $this->installation_charge = 0;
+            }
+            else
+            {
+                $this->installation_charge = 0;
+            }
+
         }
 
         private function fetchBillCount()
