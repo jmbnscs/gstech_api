@@ -90,15 +90,11 @@
             
             // Clean data
             $this->duration = htmlspecialchars(strip_tags($this->duration));
-            $this->rate_per_minute = htmlspecialchars(strip_tags($this->rate_per_minute));
-            $this->prorate_charge = htmlspecialchars(strip_tags($this->prorate_charge));
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->prorate_id = htmlspecialchars(strip_tags($this->prorate_id));
     
             // Bind data
             $stmt->bindParam(':duration', $this->duration);
-            $stmt->bindParam(':rate_per_minute', $this->rate_per_minute);
-            $stmt->bindParam(':prorate_charge', $this->prorate_charge);
             $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':prorate_id', $this->prorate_id);
     
