@@ -23,6 +23,7 @@
     
     $invoice->payment_reference_id = $data->payment_reference_id;
     $invoice->amount_paid = $data->amount_paid;
+    $invoice->payment_date = $data->payment_date;
 
     // Update Invoice
     if($invoice->update()) {
