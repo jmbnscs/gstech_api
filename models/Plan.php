@@ -86,7 +86,6 @@
                         bandwidth = :bandwidth, 
                         price = :price, 
                         rate_per_minute = plan_compute_rpm(:price), 
-                        created_at = current_timestamp(), 
                         promo_id = :promo_id, 
                         plan_status_id = :plan_status_id
                     WHERE plan_id = :plan_id';

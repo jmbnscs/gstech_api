@@ -99,7 +99,6 @@
             // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET billing_day = :billing_day, 
-                        created_at = current_timestamp(),
                         plan_id = :plan_id, 
                         connection_id = :connection_id, 
                         account_status_id = :account_status_id, 

@@ -18,21 +18,7 @@
 
     // Set ID to update
     $rate->account_id = $data->account_id;
-    $invoice_status = $data->invoice_status;
-    $rate->rating_base = $data->rating_base + 1;
-
-    if ($invoice_status === 3 || $invoice_status === 4) 
-    {
-        $rate->delinquent_ratings = $data->delinquent_ratings + 1;
-    }
-    else
-    {
-        $rate->delinquent_ratings = $data->delinquent_ratings;
-    }
-
-    $rate->avg_rating = ($rate->delinquent_ratings / $rate->rating_base) * 100;
-
-    ($rate->avg_rating >= 70) ? $rate->ratings_status_id = 1 : $rate->ratings_status_id = 2;
+    $rate->invoice_status = $data->invoice_status;
 
     // Update Rating
     if ($rate->update())
