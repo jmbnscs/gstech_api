@@ -21,6 +21,10 @@
         # Create Post
         public function create ()
         {
+            // Clean Data
+            $this->status_table = htmlspecialchars(strip_tags($this->status_table));
+            $this->status_name = htmlspecialchars(strip_tags($this->status_name));
+
             // Set table name
             $this->table = $this->status_table;
 
@@ -32,10 +36,6 @@
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
-
-            // Clean Data
-            $this->status_table = htmlspecialchars(strip_tags($this->status_table));
-            $this->status_name = htmlspecialchars(strip_tags($this->status_name));
 
             // Bind Data
             $stmt->bindParam(':status_name', $this->status_name);
