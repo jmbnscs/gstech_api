@@ -19,8 +19,9 @@
     $data = json_decode(file_get_contents("php://input"));
 
     // ID to Update
-    $prorate->account_id = $data->account_id;
+    $prorate->prorate_id = $data->prorate_id;
 
+    $prorate->account_id = $data->account_id;
     $prorate->duration = $data->duration;
 
     // Update Prorate
