@@ -175,6 +175,8 @@
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
             $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
 
+            $query = 'CALL invoice_set_payment (:account_id, :amount_paid, :payment_reference_id, :payment_date)';
+
             #set invoice_status_id
 
             $query = 'UPDATE ' . $this->table . '
@@ -188,6 +190,7 @@
             $stmt = $this->conn->prepare($query);
 
             // Bind data
+            $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':invoice_id', $this->invoice_id);
             $stmt->bindParam(':invoice_status_id', $this->invoice_status_id);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
@@ -196,6 +199,7 @@
 
             // Execute query
             if($stmt->execute()) {
+                $this->updateInstallation();
                 // $this->setInvoiceStatus(); -- in progress yung procedure
                 // $this->updateInstallation();
                 return true;
@@ -369,7 +373,6 @@
             {
                 $this->installation_charge = 0;
             }
-
         }
 
         private function fetchBillCount()
