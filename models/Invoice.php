@@ -170,18 +170,29 @@
         public function update() 
         {
             // Clean data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
             $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
 
             $query = 'CALL invoice_set_payment (:account_id, :amount_paid, :payment_reference_id, :payment_date)';
 
+            #set invoice_status_id
+
+            $query = 'UPDATE ' . $this->table . '
+                SET invoice_status_id = :invoice_status_id,
+                    payment_reference_id = :payment_reference_id,
+                    amount_paid = :amount_paid,
+                    payment_date = :payment_date
+                WHERE invoice_id = :invoice_id';
+
             // Prepare statement
             $stmt = $this->conn->prepare($query);
 
             // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':invoice_id', $this->invoice_id);
+            $stmt->bindParam(':invoice_status_id', $this->invoice_status_id);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
             $stmt->bindParam(':amount_paid', $this->amount_paid);
             $stmt->bindParam(':payment_date', $this->payment_date);
@@ -189,6 +200,8 @@
             // Execute query
             if($stmt->execute()) {
                 $this->updateInstallation();
+                // $this->setInvoiceStatus(); -- in progress yung procedure
+                // $this->updateInstallation();
                 return true;
             }
             else {

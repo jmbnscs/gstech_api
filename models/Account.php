@@ -94,7 +94,6 @@
         }
 
         # Update Account
-        # Note: Assuming that lockin_end_date and billing_day may be updated by admin
         public function update() 
         {
             // Create query
