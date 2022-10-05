@@ -104,6 +104,40 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                admin_id = :admin_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->admin_id = $row['admin_id'];
+            $this->admin_username = $row['admin_username'];
+            $this->admin_password = $row['admin_password'];
+            $this->admin_email = $row['admin_email'];
+            $this->mobile_number = $row['mobile_number'];
+            $this->first_name = $row['first_name'];
+            $this->middle_name = $row['middle_name'];
+            $this->last_name = $row['last_name'];
+            $this->birthdate = $row['birthdate'];
+            $this->address = $row['address'];
+            $this->employment_date = $row['employment_date'];
+            $this->created_at = $row['created_at'];
+            $this->admin_status_id = $row['admin_status_id'];
+            $this->user_level_id = $row['user_level_id'];
+        }
+
         # Update Admin
         public function update() 
         {

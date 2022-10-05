@@ -96,6 +96,38 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->account_id = $row['account_id'];
+            $this->first_name = $row['first_name'];
+            $this->middle_name = $row['middle_name'];
+            $this->last_name = $row['last_name'];
+            $this->billing_address = $row['billing_address'];
+            $this->mobile_number = $row['mobile_number'];
+            $this->email = $row['email'];
+            $this->birthdate = $row['birthdate'];
+            $this->gstech_id = $row['gstech_id'];
+            $this->customer_username = $row['customer_username'];
+            $this->customer_password = $row['customer_password'];
+            $this->user_level_id = $row['user_level_id'];
+        }
+
         # Update Customer
         public function update()
         {

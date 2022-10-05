@@ -93,6 +93,36 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->account_id = $row['account_id'];
+            $this->start_date = $row['start_date'];
+            $this->lockin_end_date = $row['lockin_end_date'];
+            $this->billing_day = $row['billing_day'];
+            $this->created_at = $row['created_at'];
+            $this->plan_id = $row['plan_id'];
+            $this->connection_id = $row['connection_id'];
+            $this->account_status_id = $row['account_status_id'];
+            $this->area_id = $row['area_id'];
+            $this->bill_count = $row['bill_count'];
+        }
+
         # Update Account
         public function update() 
         {

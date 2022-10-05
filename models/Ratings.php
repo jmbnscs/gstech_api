@@ -67,6 +67,31 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->account_id = $row['account_id'];
+            $this->rating_base = $row['rating_base'];
+            $this->delinquent_ratings = $row['delinquent_ratings'];
+            $this->avg_rating = $row['avg_rating'];
+            $this->ratings_status_id = $row['ratings_status_id'];
+        }
+
         # Update Ratings
         public function update()
         {
