@@ -74,6 +74,53 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                prorate_id = :prorate_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':prorate_id', $this->prorate_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->prorate_id = $row['prorate_id'];
+            $this->duration = $row['duration'];
+            $this->rate_per_minute = $row['rate_per_minute'];
+            $this->prorate_charge = $row['prorate_charge'];
+            $this->account_id = $row['account_id'];
+            $this->invoice_id = $row['invoice_id'];
+            $this->prorate_status_id = $row['prorate_status_id'];
+        }
+
+        public function read_acct () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Prorate
         public function update() 
         {

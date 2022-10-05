@@ -6,6 +6,7 @@
         private $table = 'plan';
 
         // Properties
+        public $plan_id;
         public $plan_name;
         public $bandwidth;
         public $price;
@@ -108,6 +109,37 @@
             $stmt->bindParam(':promo_id', $this->promo_id);
             $stmt->bindParam(':plan_status_id', $this->plan_status_id);
             $stmt->bindParam(':plan_id', $this->plan_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+
+        public function update_status() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET 
+                        plan_status_id = :plan_status_id
+                    WHERE plan_id = :plan_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
+            $this->plan_status_id = htmlspecialchars(strip_tags($this->plan_status_id));
+            
+                // Bind data
+            $stmt->bindParam(':plan_id', $this->plan_id);
+            $stmt->bindParam(':plan_status_id', $this->plan_status_id);
     
             // Execute query
             if($stmt->execute()) {
