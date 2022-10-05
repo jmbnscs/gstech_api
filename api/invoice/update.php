@@ -19,7 +19,7 @@
     $data = json_decode(file_get_contents("php://input"));
 
     // ID to Update
-    $invoice->invoice_id = $data->invoice_id;
+    $invoice->account_id = $data->account_id;
     
     $invoice->payment_reference_id = $data->payment_reference_id;
     $invoice->amount_paid = $data->amount_paid;
