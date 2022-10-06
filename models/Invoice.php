@@ -19,8 +19,10 @@
         public $installation_charge;
         public $total_bill;
         public $invoice_status_id;
+        public $invoice_reference_id;
         public $payment_reference_id;
         public $amount_paid;
+        public $running_balance;
         public $payment_date;
 
         # Constructor with DB
@@ -78,12 +80,14 @@
             $stmt->bindParam(':prorated_charge', $this->prorated_charge);
             $stmt->bindParam(':installation_charge', $this->installation_charge);
             $stmt->bindParam(':total_bill', $this->total_bill);
+            
 
             // Execute Query
             if ($stmt->execute())
             {
                 $this->addBillCount();
                 $this->updateProrateStatus();
+                $this->setRunningBalance();
                 return true;
             }
 
@@ -135,15 +139,17 @@
             $this->disconnection_date = $row['disconnection_date'];
             $this->previous_bill = $row['previous_bill'];
             $this->previous_payment = $row['previous_payment'];
-            $this->balance = $row['account_id'];
+            $this->balance = $row['balance'];
             $this->secured_cash = $row['secured_cash'];
             $this->subscription_amount = $row['subscription_amount'];
             $this->prorated_charge = $row['prorated_charge'];
             $this->installation_charge = $row['installation_charge'];
             $this->total_bill = $row['total_bill'];
             $this->invoice_status_id = $row['invoice_status_id'];
+            $this->invoice_reference_id = $row['invoice_reference_id'];
             $this->payment_reference_id = $row['payment_reference_id'];
             $this->amount_paid = $row['amount_paid'];
+            $this->running_balance = $row['running_balance'];
             $this->payment_date = $row['payment_date'];
         }
 
@@ -189,8 +195,6 @@
            // Execute query
            if($stmt->execute()) {
                $this->updateInstallation();
-               // $this->setInvoiceStatus(); -- in progress yung procedure
-               // $this->updateInstallation();
                return true;
            }
            else {
@@ -468,6 +472,28 @@
             $row = $this->conn->query("SELECT @invoice_id AS invoice_id")->fetch(PDO::FETCH_ASSOC);
 
             $this->invoice_id = $row['invoice_id'];
+        }
+
+        private function setRunningBalance()
+        {
+            // Create query
+            $query = 'CALL invoice_set_running_bal (:account_id, :invoice_id)';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
+
+            // Bind data
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':invoice_id', $this->invoice_id);
+
+            // Execute query
+            $stmt->execute();
+
+            $stmt->closeCursor();
         }
 
         private function addBillCount()
