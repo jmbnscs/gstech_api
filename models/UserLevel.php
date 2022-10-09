@@ -63,6 +63,28 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                user_id = :user_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->user_id = $row['user_id'];
+            $this->user_role = $row['user_role'];
+        }
+
         # Update UserLevel
         public function update() 
         {
