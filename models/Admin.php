@@ -138,6 +138,29 @@
             $this->user_level_id = $row['user_level_id'];
         }
 
+        public function login () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                admin_username = :admin_username';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->admin_id = $row['admin_id'];
+            $this->admin_username = $row['admin_username'];
+            $this->admin_password = $row['admin_password'];
+        }
+
         # Update Admin
         public function update() 
         {
