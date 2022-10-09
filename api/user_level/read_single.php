@@ -4,26 +4,25 @@
     header('Content-Type: application/json');
 
     include_once '../../config/Database.php';
-    include_once '../../models/Admin.php';
+    include_once '../../models/UserLevel.php';
 
     // Instantiate DB & Connect
     $database = new Database();
     $db = $database->connect();
 
     // Instantiate blog post object
-    $admin = new Admin ($db);
+    $user_level = new UserLevel ($db);
 
     // GET ID
-    $admin->admin_username = isset($_GET['admin_username']) ? $_GET['admin_username'] : die();
+    $user_level->user_id = isset($_GET['user_id']) ? $_GET['user_id'] : die();
 
     // Get Post
-    $admin->login();
+    $user_level->read_single();
 
     // Create Array
     $cat_arr = array (
-        'admin_id' => $admin->admin_id,
-        'admin_username' => $admin->admin_username,
-        'admin_password' => $admin->admin_password,
+        'user_id' => $user_level->user_id,
+        'user_role' => $user_level->user_role,
         'message' => 'success',
     );
 

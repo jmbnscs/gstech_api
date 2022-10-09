@@ -35,8 +35,10 @@
         'installation_charge' => $invoice->installation_charge,
         'total_bill' => $invoice->total_bill,
         'invoice_status_id' => $invoice->invoice_status_id,
+        'invoice_reference_id' => $invoice->invoice_reference_id,
         'payment_reference_id' => $invoice->payment_reference_id,
         'amount_paid' => $invoice->amount_paid,
+        'running_balance' => $invoice->running_balance,
         'payment_date' => $invoice->payment_date,
     );
 
