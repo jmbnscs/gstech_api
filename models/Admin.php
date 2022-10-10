@@ -19,6 +19,8 @@
         public $created_at;
         public $admin_status_id;
         public $user_level_id;
+
+        public $message;
  
         # Constructor with DB
         public function __construct($db)
@@ -155,12 +157,22 @@
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            $this->message = $row;
+
             // Set Properties
-            if (!empty($row)) {
+            if (!$row) {
+                $this->message = 'failed';
+            }
+            else {
                 $this->admin_id = $row['admin_id'];
                 $this->admin_username = $row['admin_username'];
                 $this->admin_password = $row['admin_password'];
+                $this->message = 'success';
             }
+
+            // $this->admin_id = $row['admin_id'];
+            // $this->admin_username = $row['admin_username'];
+            // $this->admin_password = $row['admin_password'];
         }
 
         # Update Admin

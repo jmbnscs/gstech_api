@@ -17,7 +17,7 @@
     $admin->admin_username = isset($_GET['admin_username']) ? $_GET['admin_username'] : die();
 
     // Get Post
-    // $admin->login();
+    $admin->login();
 
     // Create Array
     // $cat_arr = array (
@@ -27,8 +27,12 @@
     //     'message' => 'success',
     // );
 
+    // $cat_arr = array (
+    //     'message' => $admin->message,
+    // );
+
     // Create post
-    if ($admin->login())
+    if ($admin->message === 'success')
     {
         echo json_encode(
             array (
@@ -42,7 +46,7 @@
     else
     {
         echo json_encode(
-            array ('message' => 'Failed')
+            array ('message' => 'failed')
         );
     }
 
