@@ -156,9 +156,11 @@
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Set Properties
-            $this->admin_id = $row['admin_id'];
-            $this->admin_username = $row['admin_username'];
-            $this->admin_password = $row['admin_password'];
+            if (!empty($row)) {
+                $this->admin_id = $row['admin_id'];
+                $this->admin_username = $row['admin_username'];
+                $this->admin_password = $row['admin_password'];
+            }
         }
 
         # Update Admin
@@ -168,9 +170,7 @@
             $query = 'UPDATE ' . $this->table . '
                     SET admin_email = :admin_email, 
                         mobile_number = :mobile_number, 
-                        address = :address,
-                        admin_status_id = :admin_status_id, 
-                        user_level_id = :user_level_id
+                        address = :address
                     WHERE admin_id = :admin_id';
     
             // Prepare statement
@@ -180,16 +180,16 @@
             $this->admin_email = htmlspecialchars(strip_tags($this->admin_email));
             $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
             $this->address = htmlspecialchars(strip_tags($this->address));
-            $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
-            $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
+            // $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
+            // $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
     
             // Bind data
             $stmt->bindParam(':admin_email', $this->admin_email);
             $stmt->bindParam(':mobile_number', $this->mobile_number);
             $stmt->bindParam(':address', $this->address);
-            $stmt->bindParam(':admin_status_id', $this->admin_status_id);
-            $stmt->bindParam(':user_level_id', $this->user_level_id);
+            // $stmt->bindParam(':admin_status_id', $this->admin_status_id);
+            // $stmt->bindParam(':user_level_id', $this->user_level_id);
             $stmt->bindParam(':admin_id', $this->admin_id);
     
             // Execute query
