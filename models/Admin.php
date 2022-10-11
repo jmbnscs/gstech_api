@@ -216,6 +216,36 @@
             }
         }
 
+        public function update_password() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET admin_password = :admin_password
+                    WHERE admin_id = :admin_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->admin_password = htmlspecialchars(strip_tags($this->admin_password));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+    
+            // Bind data
+            $stmt->bindParam(':admin_password', $this->admin_password);
+            $stmt->bindParam(':admin_id', $this->admin_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+
         public function update_status() 
         {
             // Create query
