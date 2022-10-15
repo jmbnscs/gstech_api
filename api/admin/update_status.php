@@ -15,9 +15,6 @@
     // Instantiate admin object
     $admin = new Admin($db);
 
-    // Get raw data
-    $data = json_decode(file_get_contents("php://input"));
-
     // ID to Update
     $admin->admin_id = $data->admin_id;
 
