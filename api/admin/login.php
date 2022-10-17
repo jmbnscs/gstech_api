@@ -40,7 +40,8 @@
                 'admin_username' => $admin->admin_username,
                 'admin_password' => $admin->admin_password,
                 'login_attempts' => $admin->login_attempts,
-                'message' => $admin->message
+                'admin_status_id' => $admin->admin_status_id,
+                'message' => $admin->message,
             )
         );
     }

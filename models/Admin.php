@@ -21,7 +21,6 @@
         public $user_level_id;
 
         public $message;
-        public $login_attempts;
  
         # Constructor with DB
         public function __construct($db)
@@ -144,9 +143,8 @@
 
         public function login () 
         {
-            $query = 'SELECT
-                * FROM ' . 
-            $this->table . ' 
+            $query = 'SELECT *
+                FROM ' . $this->table . ' 
             WHERE
                 admin_username = :admin_username';
 
@@ -159,27 +157,29 @@
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if($row == false) {
-                $this->message = 'Account does not exist';
+            //if($row == false) {
+            //    $this->message = 'Account does not exist';
+            //}
+            //else {
+            //    $this->admin_id = $row['admin_id'];
+            //    $this->admin_username = $row['admin_username'];
+             //   $this->admin_password = $row['admin_password'];
+            //    $this->getLoginAttempts();
+            //    $this->message = 'Success';
+            //}
+
+            // Set Properties
+            if (!$row) {
+                $this->message = 'Invalid Credentials';
             }
             else {
                 $this->admin_id = $row['admin_id'];
                 $this->admin_username = $row['admin_username'];
                 $this->admin_password = $row['admin_password'];
-                $this->getLoginAttempts(); 
+                $this->login_attempts = $row['login_attempts'];
+                $this->admin_status_id = $row['admin_status_id'];
                 $this->message = 'Success';
             }
-
-            // Set Properties
-            //if (!$row) {
-            //    $this->message = 'failed';
-            //}
-            //else {
-            //    $this->admin_id = $row['admin_id'];
-            //    $this->admin_username = $row['admin_username'];
-            //    $this->admin_password = $row['admin_password'];
-            //    $this->message = 'success';
-            //}
         }
 
         # Update Admin
@@ -255,7 +255,35 @@
         {
             // Create query
             $query = 'UPDATE ' . $this->table . ' 
-                     SET login_attempts = 1 
+                     SET login_attempts = 0 
+                     WHERE admin_username = :admin_username';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
+
+            // Bind data
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+
+        public function update_locked_status ()
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . ' 
+                     SET admin_status_id = 3
                      WHERE admin_username = :admin_username';
 
             // Prepare statement
@@ -364,55 +392,5 @@
 
                 return false;
             }
-        }
-
-        public function isAdminIDExists ($admin_id)
-        {
-            $stmt = $this->conn->prepare('SELECT * FROM admin WHERE admin_id = ?;');
-    
-            if (!$stmt->execute(array($admin_id)))
-            {
-                $stmt = null;
-            }
-    
-            if ($stmt->rowCount() == 0)
-            {
-                return false;
-            }
-    
-            $stmt = null;
-        }
-
-        public function generateAdminID () 
-        {
-            $result = true;
-            while ($result) {
-                $admin_id = mt_rand(10000, 99999);
-                $result = $this->isAdminIDExists($admin_id);
-            } 
-            
-            return $admin_id;
-        }
-
-        public function getLoginAttempts()
-        {
-            // Create query
-            $query = 'SELECT * FROM ' . $this->table . '
-                     WHERE admin_username = :admin_username;';
-
-            // Prepare statement
-            $stmt = $this->conn->prepare($query);
-
-            // Clean data
-            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
-
-            // Bind data
-            $stmt->bindParam(':admin_username', $this->admin_username);
-
-            $stmt->execute();
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            $this->login_attempts = $row['login_attempts'];
         }
     }

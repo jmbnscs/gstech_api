@@ -19,12 +19,13 @@
     $admin->admin_username = isset($_GET['admin_username']) ? $_GET['admin_username'] : die();
 
     // Get Post
-    $admin->update_attempts();
-
-    // Create Array
-    $cat_arr = array (
-        'message' => 'Attempts Updated',
-    );
-
-    // Make JSON
-    print_r(json_encode($cat_arr));
+    if( $admin->update_attempts()){
+        echo json_encode(
+            array('message' => 'Attempts Updated')
+        );
+    }
+    else {
+        echo json_encode(
+            array('message' => 'Attempts Not Updated')
+        );
+    }
