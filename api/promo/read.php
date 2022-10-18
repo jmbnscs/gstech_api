@@ -31,8 +31,8 @@
 
             $post_item = array(
                 'promo_id' => $promo_id,
-                'netflix' => $netflix,
-                'fiber_switch' => $fiber_switch
+                'plan_id' => $plan_id,
+                'inclusion_id' => $inclusion_id
             );
 
             // Push to "data"
