@@ -33,3 +33,4 @@
             array('message' => 'Password not updated')
         );
     }
+    
