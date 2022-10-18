@@ -67,6 +67,24 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                plan_id = :plan_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':plan_id', $this->plan_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Promo
         public function update() 
         {
