@@ -21,13 +21,15 @@
     $plan->plan_name = $data->plan_name;
     $plan->bandwidth = $data->bandwidth;
     $plan->price = $data->price;
-    $plan->promo_id = $data->promo_id;
 
     // Create post
     if ($plan->create())
     {
         echo json_encode(
-            array ('message' => 'Plan Created')
+            array (
+                'message' => 'Plan Created',
+                'plan_id' => $plan->plan_id
+            )
         );
     }
     else

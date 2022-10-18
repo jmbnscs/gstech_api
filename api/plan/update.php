@@ -24,7 +24,6 @@ $plan->plan_id = $data->plan_id;
 $plan->plan_name = $data->plan_name;
 $plan->bandwidth = $data->bandwidth;
 $plan->price = $data->price;
-$plan->promo_id = $data->promo_id;
 $plan->plan_status_id = $data->plan_status_id;
 
 // Update Plan

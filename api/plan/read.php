@@ -36,7 +36,6 @@
                 'price' => $price,
                 'rate_per_minute' => $rate_per_minute,
                 'created_at' => $created_at,
-                'promo_id' => $promo_id,
                 'plan_status_id' => $plan_status_id,
             );
 
