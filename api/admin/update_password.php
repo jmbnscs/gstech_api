@@ -21,19 +21,15 @@
     // ID to Update
     $admin->admin_id = $data->admin_id;
 
-    $admin->admin_email = $data->admin_email;
-    $admin->mobile_number = $data->mobile_number;
-    $admin->address = $data->address;
-    // $admin->admin_status_id = $data->admin_status_id;
-    // $admin->user_level_id = $data->user_level_id;
+    $admin->admin_password = $data->admin_password;
 
-    // Update admin
-    if($admin->update()) {
+    // Update Password
+    if($admin->update_password()) {
         echo json_encode(
-            array('message' => 'Admin Updated')
+            array('message' => 'Password Updated')
     );
     } else {
         echo json_encode(
-            array('message' => 'Admin not updated')
+            array('message' => 'Password not updated')
         );
     }

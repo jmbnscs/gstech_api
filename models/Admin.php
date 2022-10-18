@@ -19,6 +19,8 @@
         public $created_at;
         public $admin_status_id;
         public $user_level_id;
+
+        public $message;
  
         # Constructor with DB
         public function __construct($db)
@@ -138,6 +140,41 @@
             $this->user_level_id = $row['user_level_id'];
         }
 
+        public function login () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                admin_username = :admin_username';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->message = $row;
+
+            // Set Properties
+            if (!$row) {
+                $this->message = 'failed';
+            }
+            else {
+                $this->admin_id = $row['admin_id'];
+                $this->admin_username = $row['admin_username'];
+                $this->admin_password = $row['admin_password'];
+                $this->message = 'success';
+            }
+
+            // $this->admin_id = $row['admin_id'];
+            // $this->admin_username = $row['admin_username'];
+            // $this->admin_password = $row['admin_password'];
+        }
+
         # Update Admin
         public function update() 
         {
@@ -145,9 +182,7 @@
             $query = 'UPDATE ' . $this->table . '
                     SET admin_email = :admin_email, 
                         mobile_number = :mobile_number, 
-                        address = :address,
-                        admin_status_id = :admin_status_id, 
-                        user_level_id = :user_level_id
+                        address = :address
                     WHERE admin_id = :admin_id';
     
             // Prepare statement
@@ -157,16 +192,46 @@
             $this->admin_email = htmlspecialchars(strip_tags($this->admin_email));
             $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
             $this->address = htmlspecialchars(strip_tags($this->address));
-            $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
-            $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
+            // $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
+            // $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
     
             // Bind data
             $stmt->bindParam(':admin_email', $this->admin_email);
             $stmt->bindParam(':mobile_number', $this->mobile_number);
             $stmt->bindParam(':address', $this->address);
-            $stmt->bindParam(':admin_status_id', $this->admin_status_id);
-            $stmt->bindParam(':user_level_id', $this->user_level_id);
+            // $stmt->bindParam(':admin_status_id', $this->admin_status_id);
+            // $stmt->bindParam(':user_level_id', $this->user_level_id);
+            $stmt->bindParam(':admin_id', $this->admin_id);
+    
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+
+        public function update_password() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET admin_password = :admin_password
+                    WHERE admin_id = :admin_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->admin_password = htmlspecialchars(strip_tags($this->admin_password));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+    
+            // Bind data
+            $stmt->bindParam(':admin_password', $this->admin_password);
             $stmt->bindParam(':admin_id', $this->admin_id);
     
             // Execute query
