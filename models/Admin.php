@@ -19,6 +19,7 @@
         public $created_at;
         public $admin_status_id;
         public $user_level_id;
+        public $login_attempts;
 
         public $message;
  
@@ -341,7 +342,9 @@
         {
             // Create query
             $query = 'UPDATE ' . $this->table . '
-                    SET admin_status_id = :admin_status_id
+                    SET 
+                        admin_status_id = :admin_status_id,
+                        login_attempts = 0
                     WHERE admin_id = :admin_id';
     
             // Prepare statement
