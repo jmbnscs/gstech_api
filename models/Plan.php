@@ -11,7 +11,6 @@
         public $bandwidth;
         public $price;
         public $rate_per_minute;
-        public $promo_id;
         public $plan_status_id;
 
         // Constructor with DB
@@ -27,8 +26,6 @@
             $this->plan_name = htmlspecialchars(strip_tags($this->plan_name));
             $this->bandwidth = htmlspecialchars(strip_tags($this->bandwidth));
             $this->price = htmlspecialchars(strip_tags($this->price));
-            $this->promo_id = htmlspecialchars(strip_tags($this->promo_id));
-            // $this->compute_rpm();
 
             // Create Query
             $query = 'INSERT INTO ' . 
@@ -37,8 +34,7 @@
                     plan_name = :plan_name,
                     bandwidth = :bandwidth,
                     price = :price,
-                    rate_per_minute = plan_compute_rpm(:price),
-                    promo_id = :promo_id';
+                    rate_per_minute = plan_compute_rpm(:price)';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -47,11 +43,11 @@
             $stmt->bindParam(':plan_name', $this->plan_name);
             $stmt->bindParam(':bandwidth', $this->bandwidth);
             $stmt->bindParam(':price', $this->price);
-            $stmt->bindParam(':promo_id', $this->promo_id);
 
             // Execute Query
             if ($stmt->execute())
             {
+                $this->getID();
                 return true;
             }
 
@@ -86,8 +82,7 @@
                     SET plan_name = :plan_name, 
                         bandwidth = :bandwidth, 
                         price = :price, 
-                        rate_per_minute = plan_compute_rpm(:price), 
-                        promo_id = :promo_id, 
+                        rate_per_minute = plan_compute_rpm(:price),
                         plan_status_id = :plan_status_id
                     WHERE plan_id = :plan_id';
     
@@ -98,7 +93,6 @@
             $this->plan_name = htmlspecialchars(strip_tags($this->plan_name));
             $this->bandwidth = htmlspecialchars(strip_tags($this->bandwidth));
             $this->price = htmlspecialchars(strip_tags($this->price));
-            $this->promo_id = htmlspecialchars(strip_tags($this->promo_id));
             $this->plan_status_id = htmlspecialchars(strip_tags($this->plan_status_id));
             $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
     
@@ -106,7 +100,6 @@
             $stmt->bindParam(':plan_name', $this->plan_name);
             $stmt->bindParam(':bandwidth', $this->bandwidth);
             $stmt->bindParam(':price', $this->price);
-            $stmt->bindParam(':promo_id', $this->promo_id);
             $stmt->bindParam(':plan_status_id', $this->plan_status_id);
             $stmt->bindParam(':plan_id', $this->plan_id);
     
@@ -137,7 +130,7 @@
             $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
             $this->plan_status_id = htmlspecialchars(strip_tags($this->plan_status_id));
             
-                // Bind data
+            // Bind data
             $stmt->bindParam(':plan_id', $this->plan_id);
             $stmt->bindParam(':plan_status_id', $this->plan_status_id);
     
@@ -178,5 +171,21 @@
 
                 return false;
             }
+        }
+
+        // Get ID of newly created plan
+        private function getID()
+        {
+            // Create query
+            $query = 'SELECT plan_get_created_id() AS plan_id';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->plan_id = $row['plan_id'];
         }
 }
