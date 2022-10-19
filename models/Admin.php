@@ -135,6 +135,7 @@
             $this->birthdate = $row['birthdate'];
             $this->address = $row['address'];
             $this->employment_date = $row['employment_date'];
+            $this->login_attempts = $row['login_attempts'];
             $this->created_at = $row['created_at'];
             $this->admin_status_id = $row['admin_status_id'];
             $this->user_level_id = $row['user_level_id'];
@@ -142,9 +143,8 @@
 
         public function login () 
         {
-            $query = 'SELECT
-                * FROM ' . 
-            $this->table . ' 
+            $query = 'SELECT *
+                FROM ' . $this->table . ' 
             WHERE
                 admin_username = :admin_username';
 
@@ -157,22 +157,29 @@
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $this->message = $row;
+            //if($row == false) {
+            //    $this->message = 'Account does not exist';
+            //}
+            //else {
+            //    $this->admin_id = $row['admin_id'];
+            //    $this->admin_username = $row['admin_username'];
+             //   $this->admin_password = $row['admin_password'];
+            //    $this->getLoginAttempts();
+            //    $this->message = 'Success';
+            //}
 
             // Set Properties
             if (!$row) {
-                $this->message = 'failed';
+                $this->message = 'Invalid Credentials';
             }
             else {
                 $this->admin_id = $row['admin_id'];
                 $this->admin_username = $row['admin_username'];
                 $this->admin_password = $row['admin_password'];
-                $this->message = 'success';
+                $this->login_attempts = $row['login_attempts'];
+                $this->admin_status_id = $row['admin_status_id'];
+                $this->message = 'Success';
             }
-
-            // $this->admin_id = $row['admin_id'];
-            // $this->admin_username = $row['admin_username'];
-            // $this->admin_password = $row['admin_password'];
         }
 
         # Update Admin
@@ -204,6 +211,90 @@
             // $stmt->bindParam(':user_level_id', $this->user_level_id);
             $stmt->bindParam(':admin_id', $this->admin_id);
     
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+
+        public function update_add_attempts ()
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . ' 
+                    SET login_attempts = (login_attempts + 1) 
+                    WHERE admin_username = :admin_username;';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
+
+            // Bind data
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+        
+        public function update_attempts ()
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . ' 
+                     SET login_attempts = 0 
+                     WHERE admin_username = :admin_username';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
+
+            // Bind data
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
+                return false;
+            }
+        }
+
+        public function update_locked_status ()
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . ' 
+                     SET admin_status_id = 3
+                     WHERE admin_username = :admin_username';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
+
+            // Bind data
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
             // Execute query
             if($stmt->execute()) {
                 return true;
@@ -301,33 +392,5 @@
 
                 return false;
             }
-        }
-
-        public function isAdminIDExists ($admin_id)
-        {
-            $stmt = $this->conn->prepare('SELECT * FROM admin WHERE admin_id = ?;');
-    
-            if (!$stmt->execute(array($admin_id)))
-            {
-                $stmt = null;
-            }
-    
-            if ($stmt->rowCount() == 0)
-            {
-                return false;
-            }
-    
-            $stmt = null;
-        }
-
-        public function generateAdminID () 
-        {
-            $result = true;
-            while ($result) {
-                $admin_id = mt_rand(10000, 99999);
-                $result = $this->isAdminIDExists($admin_id);
-            } 
-            
-            return $admin_id;
         }
     }

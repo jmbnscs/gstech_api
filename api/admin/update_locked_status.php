@@ -15,22 +15,17 @@
     // Instantiate admin object
     $admin = new Admin($db);
 
-    // Get raw data
-    $data = json_decode(file_get_contents("php://input"));
-
     // ID to Update
-    $admin->admin_id = $data->admin_id;
+    $admin->admin_username = isset($_GET['admin_username']) ? $_GET['admin_username'] : die();
 
-    $admin->admin_password = $data->admin_password;
-
-    // Update Password
-    if($admin->update_password()) {
+    // Get Post
+    if( $admin->update_locked_status()){
         echo json_encode(
-            array('message' => 'Password Updated')
-    );
-    } else {
-        echo json_encode(
-            array('message' => 'Password not updated')
+            array('message' => 'Status Updated')
         );
     }
-    
+    else {
+        echo json_encode(
+            array('message' => 'Status Not Updated')
+        );
+    }

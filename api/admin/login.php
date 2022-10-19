@@ -32,21 +32,25 @@
     // );
 
     // Create post
-    if ($admin->message === 'success')
+    if ($admin->message === 'Success')
     {
         echo json_encode(
             array (
                 'admin_id' => $admin->admin_id,
                 'admin_username' => $admin->admin_username,
                 'admin_password' => $admin->admin_password,
-                'message' => 'success',
+                'login_attempts' => $admin->login_attempts,
+                'admin_status_id' => $admin->admin_status_id,
+                'message' => $admin->message,
             )
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => 'failed')
+            array (
+                'message' => $admin->message
+            )
         );
     }
 

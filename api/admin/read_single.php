@@ -32,6 +32,7 @@
         'birthdate' => $admin->birthdate,
         'address' => $admin->address,
         'employment_date' => $admin->employment_date,
+        'login_attempts' => $admin->login_attempts,
         'created_at' => $admin->created_at,
         'admin_status_id' => $admin->admin_status_id,
         'user_level_id' => $admin->user_level_id,

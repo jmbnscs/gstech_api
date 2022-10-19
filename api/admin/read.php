@@ -41,6 +41,7 @@
                 'birthdate' => $birthdate,
                 'address' => $address,
                 'employment_date' => $employment_date,
+                'login_attempts' => $login_attempts,
                 'created_at' => $created_at,
                 'admin_status_id' => $admin_status_id,
                 'user_level_id' => $user_level_id
