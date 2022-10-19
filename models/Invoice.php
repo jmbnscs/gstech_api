@@ -88,6 +88,7 @@
                 $this->addBillCount();
                 $this->updateProrateStatus();
                 $this->setRunningBalance();
+                $this->updateInstallment();
                 return true;
             }
 
@@ -194,7 +195,7 @@
 
            // Execute query
            if($stmt->execute()) {
-               $this->updateInstallation();
+               $this->updateInstallationBalance();
                return true;
            }
            else {
@@ -578,7 +579,27 @@
         }
 
         // Not sure if you have this already but execute this when update payment is successfully executed
-        private function updateInstallation()
+        private function updateInstallment()
+        {
+            // Create query
+            $query = 'CALL install_update_installment (:account_id)';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            // Bind data
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute query
+            $stmt->execute();
+
+            $stmt->closeCursor();
+        }
+
+        private function updateInstallationBalance()
         {
             // Create query
             $query = 'CALL install_update_balance (:account_id)';
