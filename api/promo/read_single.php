@@ -13,8 +13,11 @@
     // Instantiate blog post object
     $promo = new Promo ($db);
 
+    // GET ID
+    $promo->plan_id = isset($_GET['plan_id']) ? $_GET['plan_id'] : die();
+
     // Promo Read Query
-    $result = $promo->read();
+    $result = $promo->read_single();
 
     // Get row count
     $num = $result->rowCount();

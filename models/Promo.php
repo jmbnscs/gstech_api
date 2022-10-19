@@ -6,8 +6,8 @@
 
         # Properties
         public $promo_id;
-        public $netflix;
-        public $fiber_switch;
+        public $plan_id;
+        public $inclusion_id;
 
         # Constructor with DB
         public function __construct($db)
@@ -22,19 +22,19 @@
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
-                    netflix = :netflix,
-                    fiber_switch = :fiber_switch';
+                    plan_id = :plan_id,
+                    inclusion_id = :inclusion_id';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
             // Clean Data
-            $this->netflix = htmlspecialchars(strip_tags($this->netflix));
-            $this->fiber_switch = htmlspecialchars(strip_tags($this->fiber_switch));
+            $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
+            $this->inclusion_id = htmlspecialchars(strip_tags($this->inclusion_id));
 
             // Bind Data
-            $stmt->bindParam(':netflix', $this->netflix);
-            $stmt->bindParam(':fiber_switch', $this->fiber_switch);
+            $stmt->bindParam(':plan_id', $this->plan_id);
+            $stmt->bindParam(':inclusion_id', $this->inclusion_id);
 
             // Execute Query
             if ($stmt->execute())
@@ -67,26 +67,44 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                plan_id = :plan_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':plan_id', $this->plan_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Promo
         public function update() 
         {
             // Create query
             $query = 'UPDATE ' . $this->table . '
-                    SET netflix = :netflix, 
-                        fiber_switch = :fiber_switch
+                    SET plan_id = :plan_id, 
+                        inclusion_id = :inclusion_id
                     WHERE promo_id = :promo_id';
     
             // Prepare statement
             $stmt = $this->conn->prepare($query);
             
             // Clean data
-            $this->netflix = htmlspecialchars(strip_tags($this->netflix));
-            $this->fiber_switch = htmlspecialchars(strip_tags($this->fiber_switch));
+            $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
+            $this->inclusion_id = htmlspecialchars(strip_tags($this->inclusion_id));
             $this->promo_id = htmlspecialchars(strip_tags($this->promo_id));
     
             // Bind data
-            $stmt->bindParam(':netflix', $this->netflix);
-            $stmt->bindParam(':fiber_switch', $this->fiber_switch);
+            $stmt->bindParam(':plan_id', $this->plan_id);
+            $stmt->bindParam(':inclusion_id', $this->inclusion_id);
             $stmt->bindParam(':promo_id', $this->promo_id);
     
             // Execute query

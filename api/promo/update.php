@@ -21,8 +21,8 @@
     // ID to Update
     $promo->promo_id = $data->promo_id;
 
-    $promo->netflix = $data->netflix;
-    $promo->fiber_switch = $data->fiber_switch;
+    $promo->plan_id = $data->plan_id;
+    $promo->inclusion_id = $data->inclusion_id;
 
     // Update Promo
     if($promo->update()) {
