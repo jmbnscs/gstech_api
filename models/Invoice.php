@@ -173,6 +173,29 @@
             return $stmt;
         }
 
+        public function read_by_status()
+        {
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table . ' 
+            WHERE invoice_status_id = :invoice_status_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean Data
+            $this->invoice_status_id = htmlspecialchars(strip_tags($this->invoice_status_id));
+
+            // Bind Data
+            $stmt->bindParam(':invoice_status_id', $this->invoice_status_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Invoice
         public function update() 
         {
@@ -602,16 +625,18 @@
         private function updateInstallationBalance()
         {
             // Create query
-            $query = 'CALL install_update_balance (:account_id)';
+            $query = 'CALL install_update_balance (:account_id, :amount_paid)';
 
             // Prepare statement
             $stmt = $this->conn->prepare($query);
 
             // Clean data
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
 
             // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':amount_paid', $this->amount_paid);
 
             // Execute query
             $stmt->execute();
