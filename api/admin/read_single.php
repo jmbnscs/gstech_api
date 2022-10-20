@@ -36,6 +36,7 @@
         'created_at' => $admin->created_at,
         'admin_status_id' => $admin->admin_status_id,
         'user_level_id' => $admin->user_level_id,
+        'hashed' => $admin->hashed,
         'message' => 'success',
     );
 

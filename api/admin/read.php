@@ -44,7 +44,8 @@
                 'login_attempts' => $login_attempts,
                 'created_at' => $created_at,
                 'admin_status_id' => $admin_status_id,
-                'user_level_id' => $user_level_id
+                'user_level_id' => $user_level_id,
+                'hashed' => $hashed
             );
 
             // Push to "data"
@@ -58,6 +59,6 @@
     {
         // No Admins
         echo json_encode(
-            array('message' => 'No Admin Found')
+            array('message' => 'No Admins Found')
         );
     }
