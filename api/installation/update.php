@@ -20,6 +20,7 @@
 
     // ID to Update
     $installation->account_id = $data->account_id;
+    $installation->amount_paid = $data->amount_paid;
 
     // Update Installation
     if($installation->update()) {
