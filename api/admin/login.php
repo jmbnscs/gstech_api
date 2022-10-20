@@ -19,18 +19,6 @@
     // Get Post
     $admin->login();
 
-    // Create Array
-    // $cat_arr = array (
-    //     'admin_id' => $admin->admin_id,
-    //     'admin_username' => $admin->admin_username,
-    //     'admin_password' => $admin->admin_password,
-    //     'message' => 'success',
-    // );
-
-    // $cat_arr = array (
-    //     'message' => $admin->message,
-    // );
-
     // Create post
     if ($admin->message === 'Success')
     {
@@ -41,6 +29,7 @@
                 'admin_password' => $admin->admin_password,
                 'login_attempts' => $admin->login_attempts,
                 'admin_status_id' => $admin->admin_status_id,
+                'hashed' => $admin->hashed,
                 'message' => $admin->message,
             )
         );

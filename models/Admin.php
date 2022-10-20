@@ -20,6 +20,7 @@
         public $admin_status_id;
         public $user_level_id;
         public $login_attempts;
+        public $hashed;
 
         public $message;
  
@@ -140,6 +141,7 @@
             $this->created_at = $row['created_at'];
             $this->admin_status_id = $row['admin_status_id'];
             $this->user_level_id = $row['user_level_id'];
+            $this->hashed = $row['hashed'];
         }
 
         public function login () 
@@ -158,17 +160,6 @@
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            //if($row == false) {
-            //    $this->message = 'Account does not exist';
-            //}
-            //else {
-            //    $this->admin_id = $row['admin_id'];
-            //    $this->admin_username = $row['admin_username'];
-             //   $this->admin_password = $row['admin_password'];
-            //    $this->getLoginAttempts();
-            //    $this->message = 'Success';
-            //}
-
             // Set Properties
             if (!$row) {
                 $this->message = 'Invalid Credentials';
@@ -179,6 +170,7 @@
                 $this->admin_password = $row['admin_password'];
                 $this->login_attempts = $row['login_attempts'];
                 $this->admin_status_id = $row['admin_status_id'];
+                $this->hashed = $row['hashed'];
                 $this->message = 'Success';
             }
         }
@@ -312,7 +304,8 @@
         {
             // Create query
             $query = 'UPDATE ' . $this->table . '
-                    SET admin_password = :admin_password
+                    SET admin_password = :admin_password,
+                    hashed = 1
                     WHERE admin_id = :admin_id';
     
             // Prepare statement
