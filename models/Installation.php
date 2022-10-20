@@ -12,6 +12,8 @@
         public $account_id;
         public $installation_status_id;
 
+        public $amount_paid;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -111,16 +113,18 @@
         public function update() 
         {
             // Create query
-            $query = 'CALL install_update_balance(:account_id)';
+            $query = 'CALL install_update_balance(:account_id, :amount_paid)';
     
             // Prepare statement
             $stmt = $this->conn->prepare($query);
             
             // Clean data
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
     
             // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':amount_paid', $this->amount_paid);
 
             // Execute query
             if($stmt->execute()) {
