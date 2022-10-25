@@ -21,7 +21,7 @@
     $installation->install_type_id = $data->install_type_id;
     $installation->account_id = $data->account_id;
 
-    if ($installation->install_type_id === 2)
+    if ($installation->install_type_id === 2 || $installation->install_type_id === "2")
     {
         $installation->installation_total_charge = 1200;
         $installation->installation_balance = 1200;
