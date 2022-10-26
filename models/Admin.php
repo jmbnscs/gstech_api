@@ -37,7 +37,7 @@
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
-                    admin_id = admin_gen_id(),
+                    admin_id = :admin_id,
                     admin_username = admin_gen_un(:last_name, :first_name, :birthdate),
                     admin_password = admin_gen_pw(:last_name),
                     admin_email = :admin_email,
@@ -54,7 +54,7 @@
             $stmt = $this->conn->prepare($query);
 
             // Clean Data
-            // $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $this->admin_email = htmlspecialchars(strip_tags($this->admin_email));
             $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
             $this->first_name = htmlspecialchars(strip_tags($this->first_name));
@@ -66,7 +66,7 @@
             $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
 
             // Bind Data
-            // $stmt->bindParam(':admin_id', $this->admin_id);
+            $stmt->bindParam(':admin_id', $this->admin_id);
             $stmt->bindParam(':admin_email', $this->admin_email);
             $stmt->bindParam(':mobile_number', $this->mobile_number);
             $stmt->bindParam(':first_name', $this->first_name);
