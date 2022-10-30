@@ -18,6 +18,9 @@
         public $customer_password;
         public $user_level_id;
 
+        public $login_username;
+        public $message;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -126,6 +129,44 @@
             $this->customer_username = $row['customer_username'];
             $this->customer_password = $row['customer_password'];
             $this->user_level_id = $row['user_level_id'];
+        }
+
+        # Customer Login
+        public function login()
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :login_username OR 
+                customer_username = :login_username';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':login_username', $this->login_username);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            if (!$row)
+            {
+                $this->message = 'Invalid Credentials';
+            }
+            else
+            {
+                if ($row['customer_password'] === $this->customer_password)
+                {
+                    $this->account_id = $row['account_id'];
+                    ($row['pw_changed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                }
+                else
+                {
+                    $this->message = 'Incorrect Password';
+                }
+            }
         }
 
         # Update Customer
