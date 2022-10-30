@@ -74,6 +74,37 @@
             return $stmt;
         }
 
+        public function read_single()
+        {
+            // Set table name
+            $this->table = $this->status_table;
+            
+            $query = 'SELECT
+                status_name FROM ' . 
+            $this->table . ' 
+            WHERE
+                status_id = :status_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':status_id', $this->status_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            if (!$row)
+            {
+                $this->status_name = 'error';
+            }
+            else
+            {
+                $this->status_name = $row['status_name'];
+            }
+        }
+
         # Update Statuses
         public function update() 
         {
