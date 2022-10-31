@@ -15,6 +15,9 @@
         public $ticket_status_id;
         public $account_id;
         public $admin_id;
+        public $user_level;
+
+        public $message;
 
         # Constructor with DB
         public function __construct($db)
@@ -29,29 +32,34 @@
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
-                    ticket_num = ticket_gen_ticket_num(),
+                    ticket_num = :ticket_num,
                     concern_id = :concern_id,
                     concern_details = :concern_details,
                     date_filed = :date_filed,
                     ticket_status_id = :ticket_status_id,
-                    account_id = :account_id';
+                    account_id = :account_id,
+                    user_level = :user_level';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
             // Clean Data
+            $this->ticket_num = htmlspecialchars(strip_tags($this->ticket_num));
             $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
             $this->concern_details = htmlspecialchars(strip_tags($this->concern_details));
             $this->date_filed = htmlspecialchars(strip_tags($this->date_filed));
             $this->ticket_status_id = htmlspecialchars(strip_tags($this->ticket_status_id));
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->user_level = htmlspecialchars(strip_tags($this->user_level));
 
             // Bind Data
+            $stmt->bindParam(':ticket_num', $this->ticket_num);
             $stmt->bindParam(':concern_id', $this->concern_id);
             $stmt->bindParam(':concern_details', $this->concern_details);
             $stmt->bindParam(':date_filed', $this->date_filed);
             $stmt->bindParam(':ticket_status_id', $this->ticket_status_id);
             $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':user_level', $this->user_level);
 
             // Execute Query
             if ($stmt->execute())

@@ -13,6 +13,8 @@
         public $invoice_id;
         public $prorate_status_id;
 
+        public $ticket_num;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -30,7 +32,8 @@
                     rate_per_minute = (SELECT rate_per_minute FROM plan WHERE plan_id = (SELECT plan_id FROM account WHERE account_id = :account_id)),
                     prorate_charge = prorate_gen_prorate_charge(:duration, rate_per_minute),
                     account_id = :account_id,
-                    invoice_id = NULL';
+                    invoice_id = NULL,
+                    ticket_num = :ticket_num';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -38,10 +41,12 @@
             // Clean Data
             $this->duration = htmlspecialchars(strip_tags($this->duration));
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->ticket_num = htmlspecialchars(strip_tags($this->ticket_num));
 
             // Bind Data
             $stmt->bindParam(':duration', $this->duration);
             $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':ticket_num', $this->ticket_num);
 
             // Execute Query
             if ($stmt->execute())

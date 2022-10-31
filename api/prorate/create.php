@@ -20,6 +20,7 @@
 
     $prorate->duration = $data->duration;
     $prorate->account_id = $data->account_id;
+    $prorate->ticket_num = $data->ticket_num;
 
     // Create prorate
     if ($prorate->create())

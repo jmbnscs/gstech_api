@@ -18,11 +18,13 @@
     // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
+    $ticket->ticket_num = $data->ticket_num;
     $ticket->concern_id = $data->concern_id;
     $ticket->concern_details = $data->concern_details;
     $ticket->date_filed = $data->date_filed;
     $ticket->ticket_status_id = $data->ticket_status_id;
     $ticket->account_id = $data->account_id;
+    $ticket->user_level = $data->user_level;
 
     // Create Ticket
     if ($ticket->create())
