@@ -25,4 +25,18 @@
 
             return $stmt;
         }
+
+        # Plan Details
+        public function plan()
+        {
+            // Create Query
+            $query = 'SELECT * FROM plan_details';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
     }
