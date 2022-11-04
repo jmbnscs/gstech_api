@@ -32,7 +32,6 @@
             $post_item = array(
                 'concern_id' => $concern_id,
                 'concern_category' => $concern_category,
-                'technical_support_access' => $technical_support_access,
                 'customer_access' => $customer_access
             );
 

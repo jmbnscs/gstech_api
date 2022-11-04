@@ -33,7 +33,7 @@
                 'plan_name' => $plan_name,
                 'bandwidth' => $bandwidth,
                 'price' => $price,
-                'inclusion' => ($inclusion == null) ? $inclusion = 'None' : $inclusion = $inclusion,
+                'inclusions' => ($inclusions == null) ? $inclusions = 'None' : $inclusions = $inclusions,
                 'status' => $status
             );
 
