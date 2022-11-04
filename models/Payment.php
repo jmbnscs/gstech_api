@@ -25,13 +25,15 @@
             // Clean Data
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
+            $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
 
             // Create Query
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
                     amount_paid = :amount_paid,
-                    payment_reference_id = :payment_reference_id';
+                    payment_reference_id = :payment_reference_id,
+                    payment_date = :payment_date';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -39,6 +41,7 @@
             // Bind Data
             $stmt->bindParam(':amount_paid', $this->amount_paid);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
+            $stmt->bindParam(':payment_date', $this->payment_date);
 
             // Execute Query
             if ($stmt->execute())
