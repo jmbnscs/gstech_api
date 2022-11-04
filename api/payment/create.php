@@ -20,6 +20,7 @@
 
     $payment->amount_paid = $data->amount_paid;
     $payment->payment_reference_id = $data->payment_reference_id;
+    $payment->payment_date = $data->payment_date;
 
     // Create Payment
     if ($payment->create())
