@@ -10,26 +10,26 @@
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate blog post object
+    // Instantiate Admin object
     $admin = new Admin ($db);
 
-    // Category Read Query
+    // Admin Read Query
     $result = $admin->read();
 
     // Get row count
     $num = $result->rowCount();
 
-    // Check if any posts
+    // Check if any Admin
     if ($num > 0)
     {
-        // Post Array
-        $cat_arr = array();
+        // Admin Array
+        $arr = array();
 
         while ($row = $result->fetch(PDO::FETCH_ASSOC))
         {
             extract($row);
 
-            $post_item = array(
+            $data = array(
                 'admin_id' => $admin_id,
                 'admin_username' => $admin_username,
                 'admin_password' => $admin_password,
@@ -49,11 +49,11 @@
             );
 
             // Push to "data"
-            array_push($cat_arr, $post_item);
+            array_push($arr, $data);
         }
 
         // Turn to JSON & Output
-        echo json_encode($cat_arr);
+        echo json_encode($arr);
     }
     else
     {

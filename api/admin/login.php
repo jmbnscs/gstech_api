@@ -2,6 +2,8 @@
     // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
+    header('Access-Control-Allow-Methods: POST');
+    header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
     include_once '../../config/Database.php';
     include_once '../../models/Admin.php';
@@ -14,34 +16,34 @@
     $admin = new Admin ($db);
 
     // GET ID
-    $admin->admin_username = isset($_GET['admin_username']) ? $_GET['admin_username'] : die();
+    $data = json_decode(file_get_contents("php://input"));
 
-    // Get Post
+    $admin->admin_username = $data->admin_username;
+    $admin->admin_password = $data->admin_password;
+    
+    // Get Admin
     $admin->login();
 
-    // Create post
-    if ($admin->message === 'Success')
+    if ($admin->message === 'success' || $admin->message === 'change password') 
     {
-        echo json_encode(
-            array (
-                'admin_id' => $admin->admin_id,
-                'admin_username' => $admin->admin_username,
-                'admin_password' => $admin->admin_password,
-                'login_attempts' => $admin->login_attempts,
-                'admin_status_id' => $admin->admin_status_id,
-                'hashed' => $admin->hashed,
-                'message' => $admin->message,
-            )
+        $arr = array (
+            'admin_id' => $admin->admin_id,
+            'message' => $admin->message,
         );
     }
-    else
+    else if ($admin->message === 'Invalid Password')
     {
-        echo json_encode(
-            array (
-                'message' => $admin->message
-            )
+        $arr = array (
+            'login_attempts' => $admin->login_attempts,
+            'message' => $admin->message,
+        );
+    }
+    else 
+    {
+        $arr = array (
+            'message' => $admin->message,
         );
     }
 
     // Make JSON
-    // print_r(json_encode($cat_arr));
+    print_r(json_encode($arr));

@@ -31,7 +31,7 @@ $account->area_id = $data->area_id;
 if($account->update()) {
     echo json_encode(
         array('message' => 'success')
-);
+    );
 } else {
     echo json_encode(
         array('message' => $account->error)

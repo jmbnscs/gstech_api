@@ -41,12 +41,10 @@
             'bill_count' => $bill_count,
             'created_at' => $created_at,
             'updated_at' => $updated_at,
-            'message' => 'success',
+            'message' => 'success'
         );
 
-        array_push($arr, $data);
-
-        echo json_encode($arr);
+        print_r(json_encode($data));
     }
     else
     {
