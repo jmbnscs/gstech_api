@@ -30,7 +30,7 @@
     );
     } else {
         echo json_encode(
-            array('message' => 'Password not updated')
+            array('message' => $admin->error)
         );
     }
     

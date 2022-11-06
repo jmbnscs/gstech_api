@@ -158,6 +158,11 @@
                     ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
                     $this->update_attempts();
                 }
+                else if (password_verify($this->admin_password, $row['admin_password'])) {
+                    $this->admin_id = $row['admin_id'];
+                    ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                    $this->update_attempts();
+                }
                 else
                 {
                     $this->update_add_attempts();
@@ -286,19 +291,59 @@
             // Clean data
             $this->admin_password = htmlspecialchars(strip_tags($this->admin_password));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+
+            // Hash Password
+            $options = ['cost' => 12,];
+            $this->admin_password = password_hash($this->admin_password, PASSWORD_BCRYPT, $options);
     
             // Bind data
             $stmt->bindParam(':admin_password', $this->admin_password);
             $stmt->bindParam(':admin_id', $this->admin_id);
     
-            // Execute query
-            if($stmt->execute()) {
+            // Execute Query
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Admin ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function verify_password()
+        {
+            $query = 'SELECT admin_password, hashed FROM ' . $this->table . ' WHERE admin_id = :admin_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $this->message = 'Admin ID does not exist.';
+            }
+            else if ($row['hashed'] == 0) {
+                if ($this->admin_password == $row['admin_password']) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (password_verify($this->admin_password, $row['admin_password'])){
                 return true;
             }
             else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-    
                 return false;
             }
         }
