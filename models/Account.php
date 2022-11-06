@@ -115,8 +115,7 @@
         {
             // Create query
             $query = 'UPDATE ' . $this->table . '
-                    SET billing_day = :billing_day, 
-                        plan_id = :plan_id, 
+                    SET plan_id = :plan_id, 
                         connection_id = :connection_id, 
                         account_status_id = :account_status_id, 
                         area_id = :area_id
@@ -127,7 +126,6 @@
 
             // Clean data
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
-            $this->billing_day = htmlspecialchars(strip_tags($this->billing_day));
             $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
             $this->connection_id = htmlspecialchars(strip_tags($this->connection_id));
             $this->account_status_id = htmlspecialchars(strip_tags($this->account_status_id));
@@ -135,7 +133,6 @@
 
             // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
-            $stmt->bindParam(':billing_day', $this->billing_day);
             $stmt->bindParam(':plan_id', $this->plan_id);
             $stmt->bindParam(':connection_id', $this->connection_id);
             $stmt->bindParam(':account_status_id', $this->account_status_id);

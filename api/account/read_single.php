@@ -35,6 +35,7 @@
             'start_date' => $start_date,
             'lockin_end_date' => $lockin_end_date,
             'billing_day' => $billing_day,
+            'plan_id' => $plan_id,
             'connection_id' => $connection_id,
             'account_status_id' => $account_status_id,
             'area_id' => $area_id,

@@ -314,16 +314,16 @@
         private function setEndDates()
         {
             // Create query
-            $query = 'CALL invoice_set_end_dates (:billing_period_start, @billing_period_end, @disconnection_date)';
+            $query = 'CALL invoice_set_end_dates (:account_id, @billing_period_end, @disconnection_date)';
 
             // Prepare statement
             $stmt = $this->conn->prepare($query);
 
             // Clean data
-            $this->billing_period_start = htmlspecialchars(strip_tags($this->billing_period_start));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
 
             // Bind data
-            $stmt->bindParam(':billing_period_start', $this->billing_period_start);
+            $stmt->bindParam(':account_id', $this->account_id);
 
             // Execute query
             $stmt->execute();
