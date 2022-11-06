@@ -16,13 +16,15 @@
         public $area_id;
         public $bill_count;
 
+        public $error;
+
         # Constructor with DB
         public function __construct($db)
         {
             $this->conn = $db;
         }
 
-        # Create Post
+        # Create Account
         public function create()
         {
             // Clean Data
@@ -44,8 +46,7 @@
                     plan_id = :plan_id, 
                     connection_id = :connection_id, 
                     account_status_id = :account_status_id, 
-                    area_id = :area_id,
-                    bill_count = :bill_count';
+                    area_id = :area_id';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -62,18 +63,15 @@
             $stmt->bindParam(':connection_id', $this->connection_id);
             $stmt->bindParam(':account_status_id', $this->account_status_id);
             $stmt->bindParam(':area_id', $this->area_id);
-            $stmt->bindParam(':bill_count', $this->bill_count);
 
             // Execute Query
-            if ($stmt->execute())
-            {
+            try {
+                $stmt->execute();
                 return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
             }
-
-            // Print error if something goes wrong
-            printf("Error: %s.\n", $stmt->error);
-
-            return false;
         }
 
         # Get Account 
@@ -83,7 +81,8 @@
             $query = 'SELECT 
             *
             FROM
-            ' . $this->table;
+            ' . $this->table . ' 
+            ORDER BY created_at DESC';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -108,19 +107,7 @@
             // Execute Query
             $stmt->execute();
 
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Set Properties
-            $this->account_id = $row['account_id'];
-            $this->start_date = $row['start_date'];
-            $this->lockin_end_date = $row['lockin_end_date'];
-            $this->billing_day = $row['billing_day'];
-            $this->created_at = $row['created_at'];
-            $this->plan_id = $row['plan_id'];
-            $this->connection_id = $row['connection_id'];
-            $this->account_status_id = $row['account_status_id'];
-            $this->area_id = $row['area_id'];
-            $this->bill_count = $row['bill_count'];
+            return $stmt;
         }
 
         # Update Account
@@ -154,20 +141,23 @@
             $stmt->bindParam(':account_status_id', $this->account_status_id);
             $stmt->bindParam(':area_id', $this->area_id);
     
-            // Execute query
-            if($stmt->execute()) {
-                return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-    
+            // Execute Query
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
 
         # Delete Account
-        # Note: Updated database table in ratings foreign key into delete cascade
         public function delete() 
         {
             // Create query
@@ -182,14 +172,18 @@
             // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
 
-            // Execute query
-            if($stmt->execute()) {
-                return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-
+            // Execute Query
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
@@ -217,5 +211,30 @@
 
             $this->lockin_end_date = $row['lockin_end_date'];
             $this->billing_day = $row['billing_day'];
+        }
+
+        private function isAccountExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
         }
     }

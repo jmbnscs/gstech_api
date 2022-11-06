@@ -12,7 +12,7 @@ include_once '../../models/Account.php';
 $database = new Database();
 $db = $database->connect();
 
-// Instantiate plan object
+// Instantiate Account object
 $account = new Account($db);
 
 // Get raw data
@@ -30,10 +30,10 @@ $account->area_id = $data->area_id;
 // Update account
 if($account->update()) {
     echo json_encode(
-        array('message' => 'Account Updated')
+        array('message' => 'success')
 );
 } else {
     echo json_encode(
-        array('message' => 'Account not updated')
+        array('message' => $account->error)
     );
 }
