@@ -28,7 +28,7 @@ if($account->delete()) {
 );
 } else {
     echo json_encode(
-    array('message' => 'Account Not Deleted')
+    array('message' => $account->error)
 );
 }
 

@@ -12,7 +12,7 @@
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate blog post object
+    // Instantiate Admin object
     $admin = new Admin ($db);
 
     // Get raw posted data
@@ -29,7 +29,7 @@
     $admin->employment_date = $data->employment_date;
     $admin->user_level_id = $data->user_level_id;
 
-    // Create post
+    // Create Admin
     if ($admin->create())
     {
         echo json_encode(
@@ -39,6 +39,6 @@
     else
     {
         echo json_encode(
-            array ('message' => 'Admin Not Created')
+            array ('message' => $admin->error)
         );
     }

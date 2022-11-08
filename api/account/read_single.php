@@ -16,22 +16,40 @@
     // GET ID
     $account->account_id = isset($_GET['account_id']) ? $_GET['account_id'] : die();
 
-    // Get Post
-    $account->read_single();
+    // Account Read Query
+    $result = $account->read_single();
 
-    // Create Array
-    $cat_arr = array (
-        'account_id' => $account->account_id,
-        'start_date' => $account->start_date,
-        'lockin_end_date' => $account->lockin_end_date,
-        'billing_day' => $account->billing_day,
-        'created_at' => $account->created_at,
-        'plan_id' => $account->plan_id,
-        'connection_id' => $account->connection_id,
-        'account_status_id' => $account->account_status_id,
-        'area_id' => $account->area_id,
-        'bill_count' => $account->bill_count,
-    );
+    // Get row count
+    $num = $result->rowCount();
 
-    // Make JSON
-    print_r(json_encode($cat_arr));
+    // Check if any Accounts Exist
+    if ($num > 0)
+    {
+        $arr = array();
+
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        extract($row);
+
+        $data = array(
+            'account_id' => $account_id,
+            'start_date' => $start_date,
+            'lockin_end_date' => $lockin_end_date,
+            'billing_day' => $billing_day,
+            'plan_id' => $plan_id,
+            'connection_id' => $connection_id,
+            'account_status_id' => $account_status_id,
+            'area_id' => $area_id,
+            'bill_count' => $bill_count,
+            'created_at' => $created_at,
+            'updated_at' => $updated_at,
+            'message' => 'success'
+        );
+
+        print_r(json_encode($data));
+    }
+    else
+    {
+        echo json_encode(
+            array('message' => 'error')
+        );
+    }

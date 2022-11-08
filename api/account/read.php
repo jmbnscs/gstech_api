@@ -10,48 +10,49 @@
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate blog post object
+    // Instantiate Account object
     $account = new Account ($db);
 
-    // Category Read Query
+    // Account Read Query
     $result = $account->read();
 
     // Get row count
     $num = $result->rowCount();
 
-    // Check if any posts
+    // Check if any Accounts Exist
     if ($num > 0)
     {
         // Post Array
-        $cat_arr = array();
+        $arr = array();
 
         while ($row = $result->fetch(PDO::FETCH_ASSOC))
         {
             extract($row);
 
-            $post_item = array(
+            $data = array(
                 'account_id' => $account_id,
                 'start_date' => $start_date,
                 'lockin_end_date' => $lockin_end_date,
                 'billing_day' => $billing_day,
-                'created_at' => $created_at,
                 'connection_id' => $connection_id,
                 'account_status_id' => $account_status_id,
                 'area_id' => $area_id,
                 'bill_count' => $bill_count,
-            );
+                'created_at' => $created_at,
+                'updated_at' => $updated_at,
+        );
 
             // Push to "data"
-            array_push($cat_arr, $post_item);
+            array_push($arr, $data);
         }
 
         // Turn to JSON & Output
-        echo json_encode($cat_arr);
+        echo json_encode($arr);
     }
     else
     {
-        // No Categories
+        // No Accounts
         echo json_encode(
-            array('message' => 'No Plans Found')
+            array('message' => 'No Accounts Found')
         );
     }

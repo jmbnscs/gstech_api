@@ -12,10 +12,10 @@
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate blog post object
+    // Instantiate Account object
     $account = new Account ($db);
 
-    // Get raw posted data
+    // Get raw account data
     $data = json_decode(file_get_contents("php://input"));
 
     $account->account_id = $data->account_id;
@@ -24,9 +24,8 @@
     $account->connection_id = $data->connection_id;
     $account->account_status_id = $data->account_status_id;
     $account->area_id = $data->area_id;
-    $account->bill_count = 0;
 
-    // Create post
+    // Create Account
     if ($account->create())
     {
         echo json_encode(
@@ -36,6 +35,6 @@
     else
     {
         echo json_encode(
-            array ('message' => 'Account Not Created')
+            array ('message' => $account->error)
         );
     }
