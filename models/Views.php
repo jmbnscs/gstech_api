@@ -5,6 +5,10 @@
 
         # Properties
         public $view;
+        public $promo_id;
+        public $plan_id;
+        public $inclusion_id;
+        public $inclusion_code;
 
         # Constructor with DB
         public function __construct($db)
@@ -119,6 +123,25 @@
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        # Plan Details
+        public function plan_inclusions()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_plan_inclusions 
+                    WHERE
+                plan_id = :plan_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':plan_id', $this->plan_id);
+
+            // Execute Query
             $stmt->execute();
 
             return $stmt;

@@ -11,15 +11,18 @@
     $db = $database->connect();
 
     // Instantiate blog post object
-    $views = new Views ($db);
+    $plan_inclusions = new Views ($db);
 
-    // Category Read Query
-    $result = $views->plan();
+    // GET ID
+    $plan_inclusions->plan_id = isset($_GET['plan_id']) ? $_GET['plan_id'] : die();
+
+    // Account Read Query
+    $result = $plan_inclusions->plan_inclusions();
 
     // Get row count
     $num = $result->rowCount();
 
-    // Check if any posts
+    // Check if any Accounts Exist
     if ($num > 0)
     {
         // Post Array
@@ -31,11 +34,10 @@
 
             $data = array(
                 'plan_id' => $plan_id,
-                'plan_name' => $plan_name,
-                'bandwidth' => $bandwidth,
-                'price' => $price,
-                'inclusions' => ($inclusions == null) ? $inclusions = 'None' : $inclusions = $inclusions,
-                'status' => $status
+                'promo_id' => $promo_id,
+                'inclusion_id' => $inclusion_id,
+                'inclusion_code' => $inclusion_code,
+                'message' => 'success'
             );
 
             // Push to "data"
@@ -47,8 +49,9 @@
     }
     else
     {
-        // No Categories
         echo json_encode(
-            array('message' => 'No Customers Found')
+            array('message' => 'error')
         );
     }
+
+    
