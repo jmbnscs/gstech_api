@@ -24,11 +24,11 @@
     // Delete Concerns
     if($concerns->delete()) {
         echo json_encode(
-        array('message' => 'Concerns Deleted')
+        array('message' => 'Concern Deleted')
     );
     } else {
         echo json_encode(
-        array('message' => 'Concerns Not Deleted')
+        array('message' => 'Concern Not Deleted')
     );
     }
 

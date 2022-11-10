@@ -24,7 +24,6 @@
                     $this->table . '
                 SET
                     concern_category = :concern_category,
-                    technical_support_access = :technical_support_access,
                     customer_access = :customer_access';
 
             // Prepare Statement
@@ -32,12 +31,10 @@
 
             // Clean Data
             $this->concern_category = htmlspecialchars(strip_tags($this->concern_category));
-            $this->technical_support_access = htmlspecialchars(strip_tags($this->technical_support_access));
             $this->customer_access = htmlspecialchars(strip_tags($this->customer_access));
 
             // Bind Data
             $stmt->bindParam(':concern_category', $this->concern_category);
-            $stmt->bindParam(':technical_support_access', $this->technical_support_access);
             $stmt->bindParam(':customer_access', $this->customer_access);
 
             // Execute Query
@@ -77,7 +74,6 @@
             // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET concern_category = :concern_category, 
-                        technical_support_access = :technical_support_access, 
                         customer_access = :customer_access
                     WHERE concern_id = :concern_id';
 
@@ -86,13 +82,11 @@
             
             // Clean data
             $this->concern_category = htmlspecialchars(strip_tags($this->concern_category));
-            $this->technical_support_access = htmlspecialchars(strip_tags($this->technical_support_access));
             $this->customer_access = htmlspecialchars(strip_tags($this->customer_access));
             $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
     
             // Bind data
             $stmt->bindParam(':concern_category', $this->concern_category);
-            $stmt->bindParam(':technical_support_access', $this->technical_support_access);
             $stmt->bindParam(':customer_access', $this->customer_access);
             $stmt->bindParam(':concern_id', $this->concern_id);
     
