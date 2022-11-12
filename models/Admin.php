@@ -186,7 +186,8 @@
             $query = 'UPDATE ' . $this->table . '
                     SET admin_email = :admin_email, 
                         mobile_number = :mobile_number, 
-                        address = :address
+                        address = :address, 
+                        user_level_id = :user_level_id
                     WHERE admin_id = :admin_id';
     
             // Prepare statement
@@ -197,12 +198,14 @@
             $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
             $this->address = htmlspecialchars(strip_tags($this->address));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
     
             // Bind data
             $stmt->bindParam(':admin_email', $this->admin_email);
             $stmt->bindParam(':mobile_number', $this->mobile_number);
             $stmt->bindParam(':address', $this->address);
             $stmt->bindParam(':admin_id', $this->admin_id);
+            $stmt->bindParam(':user_level_id', $this->user_level_id);
     
             // Execute Query
             try {
