@@ -74,6 +74,31 @@
             return $stmt;
         }
 
+        public function read_single () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                plan_id = :plan_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':plan_id', $this->plan_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Set Properties
+            $this->plan_id = $row['plan_id'];
+            $this->plan_name = $row['plan_name'];
+            $this->bandwidth = $row['bandwidth'];
+            $this->price = $row['price'];
+            $this->plan_status_id = $row['plan_status_id'];
+        }
+
         # Update Plan
         public function update() 
         {
