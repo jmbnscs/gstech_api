@@ -22,16 +22,15 @@
     $concerns->concern_id = $data->concern_id;
 
     $concerns->concern_category = $data->concern_category;
-    $concerns->technical_support_access = $data->technical_support_access;
     $concerns->customer_access = $data->customer_access;
 
     // Update Concerns
     if($concerns->update()) {
         echo json_encode(
-            array('message' => 'Concerns Updated')
+            array('message' => 'Concern Updated')
     );
     } else {
         echo json_encode(
-            array('message' => 'Concerns not updated')
+            array('message' => 'Concern not updated')
         );
     }

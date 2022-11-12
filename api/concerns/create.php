@@ -19,7 +19,6 @@
     $data = json_decode(file_get_contents("php://input"));
 
     $concerns->concern_category = $data->concern_category;
-    $concerns->technical_support_access = $data->technical_support_access;
     $concerns->customer_access = $data->customer_access;
 
     // Create Concern
