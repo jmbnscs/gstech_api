@@ -61,7 +61,8 @@
                     subscription_amount = :subscription_amount,
                     prorated_charge = :prorated_charge,
                     installation_charge = :installation_charge,
-                    total_bill = :total_bill';
+                    total_bill = :total_bill,
+                    invoice_status_id = :invoice_status_id';
 
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -80,6 +81,7 @@
             $stmt->bindParam(':prorated_charge', $this->prorated_charge);
             $stmt->bindParam(':installation_charge', $this->installation_charge);
             $stmt->bindParam(':total_bill', $this->total_bill);
+            $stmt->bindParam(':invoice_status_id', $this->invoice_status_id);
             
 
             // Execute Query
@@ -482,6 +484,8 @@
             $row = $this->conn->query("SELECT @total_bill AS total_bill")->fetch(PDO::FETCH_ASSOC);
 
             $this->total_bill = $row['total_bill'];
+
+            ($this->total_bill <= 0 ) ? $this->invoice_status_id = 1 : $this->invoice_status_id = 2;
         }
 
         private function setInvoiceID()
