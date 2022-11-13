@@ -196,6 +196,17 @@
             return $stmt;
         }
 
+        public function read_latest()
+        {
+            try {
+                $this->getLatestInvoice();
+                $this->read_single();
+                return true;
+            } catch (Exception $e) {
+                return false;
+            }
+        }
+
         # Update Invoice
         public function update() 
         {
@@ -219,6 +230,7 @@
            // Execute query
            if($stmt->execute()) {
                $this->updateInstallationBalance();
+               $this->getLatestInvoice();
                return true;
            }
            else {
@@ -642,5 +654,29 @@
             $stmt->execute();
 
             $stmt->closeCursor();
+        }
+
+        private function getLatestInvoice()
+        {
+            // Create query
+            $query = 'SET @invoice_id = (SELECT invoice_get_latest(:account_id));';
+
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+
+            // Clean data
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            // Bind data
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute query
+            $stmt->execute();
+
+            $stmt->closeCursor();
+
+            $row = $this->conn->query("SELECT @invoice_id AS invoice_id")->fetch(PDO::FETCH_ASSOC);
+
+            $this->invoice_id = $row['invoice_id'];
         }
     }

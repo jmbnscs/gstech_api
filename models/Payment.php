@@ -46,7 +46,8 @@
             // Execute Query
             if ($stmt->execute())
             {
-                $this->getID();
+                $this->payment_id = $this->conn->lastInsertId();
+                // $this->getID();
                 return true;
             }
 
@@ -186,11 +187,11 @@
             }
         }
 
-        // Get ID of newly created plan
+        // Get ID of newly created payment record
         private function getID()
         {
             // Create query
-            $query = 'SELECT plan_get_created_id() AS payment_id';
+            $query = 'SELECT LAST_INSERT_ID() AS payment_id';
 
             // Prepare statement
             $stmt = $this->conn->prepare($query);

@@ -27,7 +27,8 @@
     {
         echo json_encode(
             array (
-                'message' => 'Payment Record Created'
+                'message' => 'Payment Record Created',
+                'payment_id' => $payment->payment_id
             )
         );
     }

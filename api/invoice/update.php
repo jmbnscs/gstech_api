@@ -28,7 +28,10 @@
     // Update Invoice
     if($invoice->update()) {
         echo json_encode(
-            array('message' => 'Invoice Updated')
+            array(
+                'message' => 'Invoice Updated',
+                'invoice_id' => $invoice->invoice_id
+            )
     );
     } else {
         echo json_encode(

@@ -26,27 +26,19 @@
     if ($num > 0)
     {
         // Payment Array
-        $cat_arr = array();
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        extract($row);
+        $arr = array(
+            'payment_id' => $payment_id,
+            'amount_paid' => $amount_paid,
+            'payment_reference_id' => $payment_reference_id,
+            'payment_date' => $payment_date,
+            'account_id' => $account_id,
+            'invoice_id' => $invoice_id,
+            'tagged' => $tagged,
+        );
 
-        while ($row = $result->fetch(PDO::FETCH_ASSOC))
-        {
-            extract($row);
-
-            $post_item = array(
-                'payment_id' => $payment_id,
-                'amount_paid' => $amount_paid,
-                'payment_reference_id' => $payment_reference_id,
-                'account_id' => $account_id,
-                'invoice_id' => $invoice_id,
-                'tagged' => $tagged,
-            );
-
-            // Push to "data"
-            array_push($cat_arr, $post_item);
-        }
-
-        // Turn to JSON & Output
-        echo json_encode($cat_arr);
+        print_r(json_encode($arr));
     }
     else
     {
