@@ -102,6 +102,19 @@
             return $stmt;
         }
 
+        public function invoice_unpaid()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_invoice_unpaid';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Ticket Details
         public function ticket()
         {

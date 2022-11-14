@@ -42,7 +42,7 @@
             $this->setPreviousInfo();
             $this->setSubAmtAndInstallCharge();
             $this->setProrateCharge();
-            $this->computeTotalBill();
+            $this->computeTotalBill(); // sets invoice status
             $this->setInvoiceID();
 
             // Create Query

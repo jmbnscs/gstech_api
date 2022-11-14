@@ -24,7 +24,10 @@
     if ($invoice->create())
     {
         echo json_encode(
-            array ('message' => 'Invoice Created')
+            array (
+                'message' => 'Invoice Created',
+                'invoice_id' => $invoice->invoice_id
+            )
         );
     }
     else
