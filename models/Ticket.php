@@ -119,6 +119,7 @@
             $this->ticket_status_id = $row['ticket_status_id'];
             $this->account_id = $row['account_id'];
             $this->admin_id = $row['admin_id'];
+            $this->user_level = $row['user_level'];
         }
 
         # Update Ticket
@@ -184,6 +185,40 @@
                 // Print error
                 printf("Error: %s.\n", $stmt->error);
 
+                return false;
+            }
+        }
+
+        # Claim Ticket
+        public function claim() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET ticket_status_id = :ticket_status_id,
+                        admin_id = :admin_id
+                    WHERE ticket_num = :ticket_num';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->ticket_num = htmlspecialchars(strip_tags($this->ticket_num));
+            $this->ticket_status_id = htmlspecialchars(strip_tags($this->ticket_status_id));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+
+            // Bind data
+            $stmt->bindParam(':ticket_num', $this->ticket_num);
+            $stmt->bindParam(':ticket_status_id', $this->ticket_status_id);
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            // Execute query
+            if($stmt->execute()) {
+                return true;
+            }
+            else {
+                // Print error
+                printf("Error: %s.\n", $stmt->error);
+    
                 return false;
             }
         }

@@ -146,4 +146,18 @@
 
             return $stmt;
         }
+        
+        # Pending Ticket Details
+        public function ticket_pending()
+        {
+            // Create Query
+            $query = 'SELECT * FROM ticket_pending_details';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
     }
