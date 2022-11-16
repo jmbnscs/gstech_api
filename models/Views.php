@@ -10,6 +10,7 @@
         public $inclusion_id;
         public $inclusion_code;
         public $prorate_id;
+        public $account_id;
 
         # Constructor with DB
         public function __construct($db)
@@ -31,11 +32,98 @@
             return $stmt;
         }
 
+        public function customer_single()
+        {
+            // Create Query
+            $query = 'SELECT * FROM customer WHERE account_id = :account_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        #Account Details
+        public function account()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_account_info';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function account_single()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_account_info WHERE account_id = :account_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Admin Details
         public function admin()
         {
             // Create Query
             $query = 'SELECT * FROM view_admin_details';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        # Installation Details
+        public function install_single()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_account_install WHERE account_id = :account_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        # Invoice Details
+        public function invoice()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_invoice_details';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function invoice_unpaid()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_invoice_unpaid';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -88,27 +176,16 @@
             return $stmt;
         }
 
-        # Invoice Details
-        public function invoice()
+        # Rating Details
+        public function rating_single()
         {
             // Create Query
-            $query = 'SELECT * FROM view_invoice_details';
+            $query = 'SELECT r.account_id, r.rating_base, r.delinquent_ratings, r.avg_rating, (SELECT status_name FROM ratings_status WHERE status_id = r.ratings_status_id) AS rating_status FROM ratings AS r WHERE account_id = :account_id';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
-            $stmt->execute();
-
-            return $stmt;
-        }
-
-        public function invoice_unpaid()
-        {
-            // Create Query
-            $query = 'SELECT * FROM view_invoice_unpaid';
-            
-            // Prepare Statement
-            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':account_id', $this->account_id);
 
             $stmt->execute();
 

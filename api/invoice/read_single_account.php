@@ -50,6 +50,7 @@
                 'payment_reference_id' => $payment_reference_id,
                 'amount_paid' => $amount_paid,
                 'payment_date' => $payment_date,
+                'running_balance' => $running_balance,
             );
 
             // Push to "data"
