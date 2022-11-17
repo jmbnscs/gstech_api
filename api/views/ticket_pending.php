@@ -4,17 +4,17 @@
     header('Content-Type: application/json');
 
     include_once '../../config/Database.php';
-    include_once '../../models/Ticket.php';
+    include_once '../../models/Views.php';
 
     // Instantiate DB & Connect
     $database = new Database();
     $db = $database->connect();
 
     // Instantiate blog post object
-    $ticket = new Ticket ($db);
+    $views = new Views ($db);
 
-    // Ticket Read Query
-    $result = $ticket->read();
+    // Category Read Query
+    $result = $views->ticket_pending();
 
     // Get row count
     $num = $result->rowCount();
@@ -23,36 +23,32 @@
     if ($num > 0)
     {
         // Post Array
-        $cat_arr = array();
+        $arr = array();
 
         while ($row = $result->fetch(PDO::FETCH_ASSOC))
         {
             extract($row);
 
-            $post_item = array(
-                'ticket_id' => $ticket_id,
+            $data = array(
                 'ticket_num' => $ticket_num,
-                'concern_id' => $concern_id,
-                'concern_details' => $concern_details,
+                'concern' => $concern,
                 'date_filed' => $date_filed,
-                'date_resolved' => $date_resolved,
-                'resolution_details' => $resolution_details,
-                'ticket_status_id' => $ticket_status_id,
+                'ticket_status' => $ticket_status,
                 'account_id' => $account_id,
-                'admin_id' => $admin_id,
-                'user_level' => $user_level
+                'user_level' => $user_level,
+                'admin_username' => $admin_username
             );
 
             // Push to "data"
-            array_push($cat_arr, $post_item);
+            array_push($arr, $data);
         }
 
         // Turn to JSON & Output
-        echo json_encode($cat_arr);
+        echo json_encode($arr);
     }
     else
     {
-        // No Ticket
+        // No Categories
         echo json_encode(
             array('message' => 'No Tickets Found')
         );

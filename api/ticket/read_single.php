@@ -30,6 +30,7 @@
         'ticket_status_id' => $ticket->ticket_status_id,
         'account_id' => $ticket->account_id,
         'admin_id' => $ticket->admin_id,
+        'user_level' => $ticket->user_level
     );
 
     // Make JSON
