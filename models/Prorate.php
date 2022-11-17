@@ -104,6 +104,7 @@
             $this->account_id = $row['account_id'];
             $this->invoice_id = $row['invoice_id'];
             $this->prorate_status_id = $row['prorate_status_id'];
+            $this->ticket_num = $row['ticket_num'];
         }
 
         public function read_acct () 

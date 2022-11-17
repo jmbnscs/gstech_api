@@ -68,6 +68,20 @@
             return $stmt;
         }
 
+        public function read_single()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' 
+            WHERE concern_id = :concern_id';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->concern_id = htmlspecialchars(strip_tags($this->concern_id));
+            $stmt->bindParam(':concern_id', $this->concern_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Concerns
         public function update() 
         {

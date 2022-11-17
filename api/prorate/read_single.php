@@ -28,6 +28,7 @@
         'account_id' => $prorate->account_id,
         'invoice_id' => $prorate->invoice_id,
         'prorate_status_id' => $prorate->prorate_status_id,
+        'ticket_num' => $prorate->ticket_num,
     );
 
     // Make JSON
