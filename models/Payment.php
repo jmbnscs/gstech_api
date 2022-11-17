@@ -92,6 +92,22 @@
             return $stmt;
         }
 
+        public function read_single_account () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Plan
         public function update() 
         {
