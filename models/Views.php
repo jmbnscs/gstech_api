@@ -9,6 +9,7 @@
         public $plan_id;
         public $inclusion_id;
         public $inclusion_code;
+        public $prorate_id;
 
         # Constructor with DB
         public function __construct($db)
@@ -72,11 +73,39 @@
             return $stmt;
         }
 
+        public function prorate_single()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_prorate_details WHERE prorate_id = :prorate_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':prorate_id', $this->prorate_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Invoice Details
         public function invoice()
         {
             // Create Query
             $query = 'SELECT * FROM view_invoice_details';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function invoice_unpaid()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_invoice_unpaid';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);

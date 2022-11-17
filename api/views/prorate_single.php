@@ -4,38 +4,37 @@
     header('Content-Type: application/json');
 
     include_once '../../config/Database.php';
-    include_once '../../models/Payment.php';
+    include_once '../../models/Views.php';
 
     // Instantiate DB & Connect
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate Payment object
-    $payment = new Payment ($db);
+    // Instantiate blog post object
+    $views = new Views ($db);
 
     // GET ID
-    $payment->payment_id = isset($_GET['payment_id']) ? $_GET['payment_id'] : die();
+    $views->prorate_id = isset($_GET['prorate_id']) ? $_GET['prorate_id'] : die();
 
-    // Payment Read Query
-    $result = $payment->read_single();
+    // Category Read Query
+    $result = $views->prorate_single();
 
     // Get row count
     $num = $result->rowCount();
 
-    // Check if any Payment Record
+    // Check if any Prorate Record
     if ($num > 0)
     {
         // Payment Array
         $row = $result->fetch(PDO::FETCH_ASSOC);
         extract($row);
         $arr = array(
-            'payment_id' => $payment_id,
-            'amount_paid' => $amount_paid,
-            'payment_reference_id' => $payment_reference_id,
-            'payment_date' => $payment_date,
+            'prorate_id' => $prorate_id,
             'account_id' => $account_id,
-            'invoice_id' => $invoice_id,
-            'tagged' => $tagged,
+            'customer_name' => $first_name . ' ' . $last_name,
+            'duration' => $duration,
+            'amount' => $amount,
+            'status' => $status
         );
 
         print_r(json_encode($arr));
@@ -44,6 +43,6 @@
     {
         // No Payment
         echo json_encode(
-            array('message' => 'No Payment Record Found')
+            array('message' => 'No Prorate Records Found')
         );
     }
