@@ -36,7 +36,8 @@
                 'prorate_charge' => $prorate_charge,
                 'account_id' => $account_id,
                 'invoice_id' => $invoice_id,
-                'prorate_status_id' => $prorate_status_id
+                'prorate_status_id' => $prorate_status_id,
+                'created_at' => $created_at
             );
 
             // Push to "data"
