@@ -47,6 +47,6 @@
     else
     {
         echo json_encode(
-            array('message' => 'No Payment Records Found')
+            array('message' => 'No Ticket Records Found')
         );
     }
