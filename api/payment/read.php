@@ -36,6 +36,7 @@
                 'account_id' => $account_id,
                 'invoice_id' => $invoice_id,
                 'tagged' => $tagged,
+                'payment_date' => $payment_date,
             );
 
             // Push to "data"

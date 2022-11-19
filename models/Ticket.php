@@ -122,6 +122,26 @@
             $this->user_level = $row['user_level'];
         }
 
+        public function read_status()
+        {
+            // Create Query
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table . ' 
+            WHERE
+                ticket_status_id = :ticket_status_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+            $this->ticket_status_id = htmlspecialchars(strip_tags($this->ticket_status_id));
+            $stmt->bindParam(':ticket_status_id', $this->ticket_status_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         public function read_single_account()
         {
             $query = 'SELECT 

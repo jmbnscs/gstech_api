@@ -127,6 +127,26 @@
             return $stmt;
         }
 
+        public function read_status () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE
+                prorate_status_id = :prorate_status_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':prorate_status_id', $this->prorate_status_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Prorate
         public function update() 
         {
