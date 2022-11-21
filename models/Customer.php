@@ -21,6 +21,8 @@
         public $login_username;
         public $message;
 
+        public $account_status_id;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -150,6 +152,8 @@
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            $this->account_status_id = $this->getAccountStatus();
+
             // Set Properties
             if (!$row)
             {
@@ -157,8 +161,16 @@
             }
             else
             {
-                if ($row['customer_password'] === $this->customer_password)
+                if ($this->account_status_id === 2) 
                 {
+                    $this->message = 'The account is restricted from logging in.';
+                }
+                else if ($row['customer_password'] === $this->customer_password)
+                {
+                    $this->account_id = $row['account_id'];
+                    ($row['pw_changed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                }
+                else if (password_verify($this->customer_password, $row['customer_password'])) {
                     $this->account_id = $row['account_id'];
                     ($row['pw_changed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
                 }
@@ -230,6 +242,123 @@
                 printf("Error: %s.\n", $stmt->error);
 
                 return false;
+            }
+        }
+
+        public function update_password() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET customer_password = :customer_password,
+                    pw_changed = 1
+                    WHERE account_id = :account_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->customer_password = htmlspecialchars(strip_tags($this->customer_password));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            // Hash Password
+            $options = ['cost' => 12,];
+            $this->customer_password = password_hash($this->customer_password, PASSWORD_BCRYPT, $options);
+    
+            // Bind data
+            $stmt->bindParam(':customer_password', $this->customer_password);
+            $stmt->bindParam(':account_id', $this->account_id);
+    
+            // Execute Query
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function verify_password()
+        {
+            $query = 'SELECT customer_password, pw_changed FROM ' . $this->table . ' WHERE account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $this->message = 'Account ID does not exist.';
+            }
+            else if ($row['pw_changed'] == 0) {
+                if ($this->customer_password == $row['customer_password']) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (password_verify($this->customer_password, $row['customer_password'])){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        private function isAccountExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        private function getAccountStatus()
+        {
+            $query = 'SELECT a.account_status_id 
+            FROM account a JOIN customer c ON a.account_id = c.account_id 
+            WHERE a.account_id = :login_username OR customer_username = :login_username';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->login_username = htmlspecialchars(strip_tags($this->login_username));
+
+            $stmt->bindParam(':login_username', $this->login_username);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($row) {
+                return $row['account_status_id'];
             }
         }
     }
