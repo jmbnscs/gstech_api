@@ -18,6 +18,7 @@
 
     $log->admin_id = $data->admin_id;
     $log->username = $data->username;
+    $log->page_accessed = $data->page_accessed;
     $log->activity = $data->activity;
     $log->ip_address = $data->ip_address;
     $log->user_agent = $data->user_agent;
