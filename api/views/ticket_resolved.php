@@ -36,7 +36,8 @@
                 'date_resolved' => $date_resolved,
                 'ticket_status' => $ticket_status,
                 'account_id' => $account_id,
-                'admin_username' => $admin_username
+                'admin_username' => $admin_username,
+                'admin_id' => $admin_id
             );
 
             // Push to "data"

@@ -34,7 +34,8 @@
                 'concern' => $concern,
                 'date_filed' => $date_filed,
                 'ticket_status' => $ticket_status,
-                'account_id' => $account_id
+                'account_id' => $account_id,
+                'user_level' => $user_level
             );
 
             // Push to "data"
