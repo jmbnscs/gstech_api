@@ -36,7 +36,8 @@
                 'ticket_status' => $ticket_status,
                 'account_id' => $account_id,
                 'user_level' => $user_level,
-                'admin_username' => $admin_username
+                'admin_username' => $admin_username,
+                'admin_id' => $admin_id
             );
 
             // Push to "data"

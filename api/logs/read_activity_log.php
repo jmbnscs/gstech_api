@@ -3,23 +3,22 @@
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
 
-    include_once '../../config/Database.php';
-    include_once '../../models/Views.php';
+    include_once '../../config/LogsDatabase.php';
+    include_once '../../models/Logs.php';
 
     // Instantiate DB & Connect
-    $database = new Database();
+    $database = new LogsDatabase();
     $db = $database->connect();
 
-    // Instantiate blog post object
-    $views = new Views ($db);
+    $log = new Logs ($db);
 
-    // Category Read Query
-    $result = $views->ticket();
+    // Account Read Query
+    $result = $log->read_activity_log();
 
     // Get row count
     $num = $result->rowCount();
 
-    // Check if any posts
+    // Check if any Accounts Exist
     if ($num > 0)
     {
         // Post Array
@@ -30,13 +29,13 @@
             extract($row);
 
             $data = array(
-                'ticket_num' => $ticket_num,
-                'concern' => $concern,
-                'date_filed' => $date_filed,
-                'ticket_status' => $ticket_status,
-                'account_id' => $account_id,
-                'user_level' => $user_level
-            );
+                'id' => $id,
+                'admin_id' => $admin_id,
+                'username' => $username,
+                'activity' => $activity,
+                'ip_address' => $ip_address,
+                'user_agent' => $user_agent
+        );
 
             // Push to "data"
             array_push($arr, $data);
@@ -47,8 +46,8 @@
     }
     else
     {
-        // No Categories
+        // No Accounts
         echo json_encode(
-            array('message' => 'No Tickets Found')
+            array('message' => 'No Logs Found')
         );
     }
