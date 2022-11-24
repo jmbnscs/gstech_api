@@ -33,7 +33,7 @@
                 'invoice_id' => $invoice_id,
                 'customer_name' => $first_name . ' ' . $last_name,
                 'disconnection_date' => $disconnection_date,
-                'total_bill' => $total_bill,
+                'running_balance' => $running_balance,
                 'status' => $status
             );
 
