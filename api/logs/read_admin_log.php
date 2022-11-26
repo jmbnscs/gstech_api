@@ -12,8 +12,10 @@
 
     $log = new Logs ($db);
 
+    $log->admin_id = isset($_GET['admin_id']) ? $_GET['admin_id'] : die();
+
     // Account Read Query
-    $result = $log->read_activity_log();
+    $result = $log->read_admin_log();
 
     // Get row count
     $num = $result->rowCount();
