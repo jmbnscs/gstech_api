@@ -63,6 +63,19 @@
             return $stmt;
         }
 
+        public function read_single()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE connection_id = :connection_id';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->connection_id = htmlspecialchars(strip_tags($this->connection_id));
+            $stmt->bindParam(':connection_id', $this->connection_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Connection
         public function update() 
         {
