@@ -108,6 +108,15 @@
             return $stmt;
         }
 
+        public function read_untagged () {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE tagged = 0';
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            
+            return $stmt;
+        }
+
         # Update Plan
         public function update() 
         {

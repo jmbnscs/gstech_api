@@ -151,7 +151,7 @@
         public function prorate()
         {
             // Create Query
-            $query = 'SELECT * FROM view_prorate_details';
+            $query = 'SELECT * FROM view_prorate_details WHERE status = "UNCHARGED"';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);

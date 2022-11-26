@@ -65,6 +65,19 @@
             return $stmt;
         }
 
+        public function read_single()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE inclusion_id = :inclusion_id';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->inclusion_id = htmlspecialchars(strip_tags($this->inclusion_id));
+            $stmt->bindParam(':inclusion_id', $this->inclusion_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Inclusion
         public function update() 
         {

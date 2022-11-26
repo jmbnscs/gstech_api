@@ -63,6 +63,19 @@
             return $stmt;
         }
 
+        public function read_single()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE area_id = :area_id';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->area_id = htmlspecialchars(strip_tags($this->area_id));
+            $stmt->bindParam(':area_id', $this->area_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Area
         public function update() 
         {
