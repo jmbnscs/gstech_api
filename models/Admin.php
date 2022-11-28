@@ -31,10 +31,8 @@
             $this->conn = $db;
         }
 
-        # Create Post
         public function create()
         {
-            // Create Query
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
@@ -51,10 +49,8 @@
                     employment_date = :employment_date,
                     user_level_id = :user_level_id';
 
-            // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean Data
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $this->admin_email = htmlspecialchars(strip_tags($this->admin_email));
             $this->mobile_number = htmlspecialchars(strip_tags($this->mobile_number));
@@ -66,7 +62,6 @@
             $this->employment_date = htmlspecialchars(strip_tags($this->employment_date));
             $this->user_level_id = htmlspecialchars(strip_tags($this->user_level_id));
 
-            // Bind Data
             $stmt->bindParam(':admin_id', $this->admin_id);
             $stmt->bindParam(':admin_email', $this->admin_email);
             $stmt->bindParam(':mobile_number', $this->mobile_number);
@@ -78,7 +73,6 @@
             $stmt->bindParam(':employment_date', $this->employment_date);
             $stmt->bindParam(':user_level_id', $this->user_level_id);
 
-            // Execute Query
             try {
                 $stmt->execute();
                 return true;
@@ -286,7 +280,7 @@
             $query = 'UPDATE ' . $this->table . '
                     SET admin_password = :admin_password,
                     hashed = 1
-                    WHERE admin_id = :admin_id';
+                    WHERE admin_id = :admin_id;';
     
             // Prepare statement
             $stmt = $this->conn->prepare($query);
@@ -304,6 +298,40 @@
             $stmt->bindParam(':admin_id', $this->admin_id);
     
             // Execute Query
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Admin ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function reset_password() 
+        {
+            $query = 'UPDATE ' . $this->table . '
+                    SET admin_password = :admin_password,
+                    hashed = 0,
+                    admin_status_id = 1 
+                    WHERE admin_id = :admin_id;';
+    
+            $stmt = $this->conn->prepare($query);
+            
+            $this->admin_password = htmlspecialchars(strip_tags($this->admin_password));
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+
+            $options = ['cost' => 12,];
+            $this->admin_password = password_hash($this->admin_password, PASSWORD_BCRYPT, $options);
+    
+            $stmt->bindParam(':admin_password', $this->admin_password);
+            $stmt->bindParam(':admin_id', $this->admin_id);
+    
             try {
                 if ($this->isAccountExist()) {
                     $stmt->execute();

@@ -6,23 +6,17 @@
     include_once '../../config/Database.php';
     include_once '../../models/Admin.php';
 
-    // Instantiate DB & Connect
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate Admin object
     $admin = new Admin ($db);
 
-    // GET ID
     $admin->admin_id = isset($_GET['admin_id']) ? $_GET['admin_id'] : die();
 
-    // Admin Read Query
     $result = $admin->read_single();
 
-    // Get row count
     $num = $result->rowCount();
 
-    // Check if any Admin Exist
     if ($num > 0)
     {
         $arr = array();
