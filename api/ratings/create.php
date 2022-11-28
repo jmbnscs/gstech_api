@@ -24,12 +24,15 @@
     if ($ratings->create())
     {
         echo json_encode(
-            array ('message' => 'Ratings Created')
+            array ('success' => true)
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => 'Ratings Not Created')
+            array (
+                'success' => false,
+                'error' => $ratings->error
+            )
         );
     }

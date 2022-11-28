@@ -22,6 +22,8 @@
         public $message;
 
         public $account_status_id;
+        
+        public $error;
 
         # Constructor with DB
         public function __construct($db)
@@ -71,15 +73,11 @@
             $stmt->bindParam(':email', $this->email);
             $stmt->bindParam(':birthdate', $this->birthdate);
 
-            // Execute Query
-            if ($stmt->execute())
-            {
+            try {
+                $stmt->execute();
                 return true;
-            }
-            else 
-            {
-                // Print error if something goes wrong
-                printf("Error: %s.\n", $stmt->error);
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
@@ -234,13 +232,17 @@
             $stmt->bindParam(':account_id', $this->account_id);
 
             // Execute query
-            if($stmt->execute()) {
-                return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

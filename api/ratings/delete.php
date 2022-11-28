@@ -25,12 +25,15 @@ $rate->account_id = $data->account_id;
 if($rate->delete()) 
 {
     echo json_encode(
-        array('message' => 'Rating Deleted')
+        array ('success' => true)
     );
-} 
-else 
+}
+else
 {
     echo json_encode(
-        array('message' => 'Rating Not Deleted')
+        array (
+            'success' => false,
+            'error' => $rate->error
+        )
     );
 }

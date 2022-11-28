@@ -8,27 +8,26 @@
     include_once '../../config/Database.php';
     include_once '../../models/Installation.php';
 
-    // Instantiate DB & connect
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate blog post object
     $installation = new Installation($db);
 
-    // Get raw data
     $data = json_decode(file_get_contents("php://input"));
 
-    // Set ID to Delete
     $installation->account_id = $data->account_id;
 
-    // Delete Installation
     if($installation->delete()) {
         echo json_encode(
-        array('message' => 'Installation Deleted')
-    );
-    } else {
+            array ('success' => true)
+        );
+    }
+    else {
         echo json_encode(
-        array('message' => 'Installation Not Deleted')
-    );
+            array (
+                'success' => false,
+                'error' => $installation->error
+            )
+        );
     }
 

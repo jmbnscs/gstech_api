@@ -24,10 +24,15 @@
     // Delete account
     if($customer->delete()) {
         echo json_encode(
-        array('message' => 'Customer Deleted')
-    );
-    } else {
+            array ('success' => true)
+        );
+    }
+    else
+    {
         echo json_encode(
-        array('message' => 'Customer Not Deleted')
-    );
+            array (
+                'success' => false,
+                'error' => $customer->error
+            )
+        );
     }

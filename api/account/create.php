@@ -29,12 +29,15 @@
     if ($account->create())
     {
         echo json_encode(
-            array ('message' => 'Account Created')
+            array ('success' => true)
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => $account->error)
+            array (
+                'success' => false,
+                'error' => $account->error
+            )
         );
     }

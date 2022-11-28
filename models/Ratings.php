@@ -11,6 +11,8 @@
         public $ratings_status_id;
         public $account_id;
 
+        public $error;
+        
         # Constructor with DB
         public function __construct($db)
         {
@@ -36,15 +38,11 @@
             $stmt->bindParam(':account_id', $this->account_id);
 
             // Execute Query
-            if ($stmt->execute())
-            {
+            try {
+                $stmt->execute();
                 return true;
-            }
-            else
-            {
-                // Print error if something goes wrong
-                printf("Error: %s.\n", $stmt->error);
-
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
@@ -124,26 +122,50 @@
         # Delete Rating
         public function delete()
         {
-            // Create query
             $query = 'DELETE FROM ' . $this->table . ' WHERE account_id = :account_id';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
 
-            // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
 
-            // Execute query
-            if($stmt->execute()) {
-                return true;
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
             }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
+        }
 
+        private function isAccountExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
