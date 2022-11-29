@@ -266,4 +266,18 @@
 
             return $stmt;
         }
+
+        # Invalid Ticket Details
+        public function ticket_invalid()
+        {
+            // Create Query
+            $query = 'SELECT * FROM ticket_invalid_details';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
     }
