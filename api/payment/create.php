@@ -27,7 +27,7 @@
     {
         echo json_encode(
             array (
-                'message' => 'Payment Record Created',
+                'success' => true,
                 'payment_id' => $payment->payment_id
             )
         );
@@ -35,6 +35,6 @@
     else
     {
         echo json_encode(
-            array ('message' => 'Payment Record Not Created')
+            array ('success' => false)
         );
     }

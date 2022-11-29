@@ -1,35 +1,34 @@
 <?php
+    // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: PUT');
     header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Methods, Authorization,X-Requested-With');
 
     include_once '../../config/Database.php';
-    include_once '../../models/Prorate.php';
+    include_once '../../models/Admin.php';
 
     $database = new Database();
     $db = $database->connect();
 
-    $prorate = new Prorate($db);
+    $admin = new Admin($db);
 
     $data = json_decode(file_get_contents("php://input"));
 
-    $prorate->prorate_id = $data->prorate_id;
+    $admin->admin_id = $data->admin_id;
+    $admin->admin_password = $data->admin_password;
 
-    $prorate->account_id = $data->account_id;
-    $prorate->duration = $data->duration;
-
-    if($prorate->update()) {
+    if($admin->reset_password()) {
         echo json_encode(
-            array ('success' => true)
-        );
-    }
-    else
-    {
+            array('success' => true)
+    );
+    } 
+    else {
         echo json_encode(
-            array (
+            array(
                 'success' => false,
-                'error' => $payment->error
+                'error' => $admin->error
             )
         );
     }
+    

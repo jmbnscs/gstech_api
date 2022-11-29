@@ -16,23 +16,23 @@
     $data = json_decode(file_get_contents("php://input"));
 
     $log->admin_id = $data->admin_id;
-    $log->username = $data->username;
-    $log->page_accessed = $data->page_accessed;
-    $log->activity = $data->activity;
-    $log->ip_address = $data->ip_address;
-    $log->user_agent = $data->user_agent;
+    $log->def_username = $data->def_username;
+    $log->def_password = $data->def_password;
 
-    if ($log->log_activity())
+    if ($log->log_admin_default())
     {
         echo json_encode(
             array (
-                'message' => true
+                'success' => true
             )
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => false)
+            array (
+                'success' => false,
+                'error' => $log->error
+            )
         );
     }

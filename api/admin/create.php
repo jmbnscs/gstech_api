@@ -8,14 +8,11 @@
     include_once '../../config/Database.php';
     include_once '../../models/Admin.php';
 
-    // Instantiate DB & Connect
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate Admin object
     $admin = new Admin ($db);
 
-    // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
     $admin->admin_id = $data->admin_id;
@@ -29,16 +26,18 @@
     $admin->employment_date = $data->employment_date;
     $admin->user_level_id = $data->user_level_id;
 
-    // Create Admin
     if ($admin->create())
     {
         echo json_encode(
-            array ('message' => 'Admin Created')
+            array ('success' => true)
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => $admin->error)
+            array (
+                'success' => false,
+                'error' => $admin->error
+            )
         );
     }

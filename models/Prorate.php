@@ -150,7 +150,6 @@
         # Update Prorate
         public function update() 
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET duration = :duration, 
                         rate_per_minute = (SELECT rate_per_minute FROM plan WHERE plan_id = (SELECT plan_id FROM account WHERE account_id = :account_id)), 
@@ -158,27 +157,27 @@
                         account_id = :account_id
                     WHERE prorate_id = :prorate_id';
     
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
             
-            // Clean data
             $this->duration = htmlspecialchars(strip_tags($this->duration));
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->prorate_id = htmlspecialchars(strip_tags($this->prorate_id));
     
-            // Bind data
             $stmt->bindParam(':duration', $this->duration);
             $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':prorate_id', $this->prorate_id);
     
-            // Execute query
-            if($stmt->execute()) {
-                return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-    
+            try {
+                if ($this->isProrateIDExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Prorate ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
@@ -186,26 +185,50 @@
         # Delete Prorate
         public function delete() 
         {
-            // Create query
             $query = 'DELETE FROM ' . $this->table . ' WHERE prorate_id = :prorate_id';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->prorate_id = htmlspecialchars(strip_tags($this->prorate_id));
 
-            // Bind data
             $stmt->bindParam(':prorate_id', $this->prorate_id);
 
-            // Execute query
-            if($stmt->execute()) {
-                return true;
+            try {
+                if ($this->isProrateIDExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Prorate ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
             }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
+        }
 
+        private function isProrateIDExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE prorate_id = :prorate_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->prorate_id = htmlspecialchars(strip_tags($this->prorate_id));
+            $stmt->bindParam(':prorate_id', $this->prorate_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

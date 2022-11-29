@@ -13,6 +13,8 @@
         public $invoice_id;
         public $tagged;
 
+        public $error;
+
         // Constructor with DB
         public function __construct($db)
         {
@@ -22,12 +24,10 @@
         # Create Post
         public function create ()
         {
-            // Clean Data
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
             $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
 
-            // Create Query
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
@@ -35,26 +35,20 @@
                     payment_reference_id = :payment_reference_id,
                     payment_date = :payment_date';
 
-            // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
-            // Bind Data
             $stmt->bindParam(':amount_paid', $this->amount_paid);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
             $stmt->bindParam(':payment_date', $this->payment_date);
 
-            // Execute Query
-            if ($stmt->execute())
-            {
+            try {
+                $stmt->execute();
                 $this->payment_id = $this->conn->lastInsertId();
-                // $this->getID();
                 return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
             }
-
-            // Print error if something goes wrong
-            printf("Error: %s.\n", $stmt->error);
-
-            return false;
         }
 
         # Get Plans
@@ -188,26 +182,25 @@
         # Delete Plan
         public function delete() 
         {
-            // Create query
             $query = 'DELETE FROM ' . $this->table . ' WHERE payment_id = :payment_id';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->payment_id = htmlspecialchars(strip_tags($this->payment_id));
 
-            // Bind data
             $stmt->bindParam(':payment_id', $this->payment_id);
 
-            // Execute query
-            if($stmt->execute()) {
-                return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-
+            try {
+                if ($this->isPaymentIDExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Payment ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
@@ -226,5 +219,30 @@
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             $this->payment_id = $row['payment_id'];
+        }
+
+        private function isPaymentIDExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE payment_id = :payment_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->payment_id = htmlspecialchars(strip_tags($this->payment_id));
+            $stmt->bindParam(':payment_id', $this->payment_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
         }
 }

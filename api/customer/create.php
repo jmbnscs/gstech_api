@@ -31,12 +31,15 @@
     if ($customer->create())
     {
         echo json_encode(
-            array ('message' => 'Customer Created')
+            array ('success' => true)
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => 'Customer Not Created')
+            array (
+                'success' => false,
+                'error' => $customer->error
+            )
         );
     }

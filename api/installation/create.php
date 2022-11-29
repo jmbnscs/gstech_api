@@ -40,12 +40,15 @@
     if ($installation->create())
     {
         echo json_encode(
-            array ('message' => 'Installation Created')
+            array ('success' => true)
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => 'Installation Not Created')
+            array (
+                'success' => false,
+                'error' => $installation->error
+            )
         );
     }

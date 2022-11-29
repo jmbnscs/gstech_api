@@ -9,13 +9,15 @@
         public $ip_address;
         public $user_agent;
 
-
         public $account_id;
         public $invoice_id;
         public $email_sent;
         public $status_id;
         public $date_accessed;
         public $today_date;
+
+        public $def_username;
+        public $def_password;
 
         public $error;
 
@@ -24,6 +26,7 @@
             $this->conn = $db;
         }
 
+        # Email Logs
         public function log_email() {
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
@@ -97,6 +100,7 @@
             }
         }
 
+        # Admin Logs
         public function log_activity() {
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $this->username = htmlspecialchars(strip_tags($this->username));
@@ -157,5 +161,50 @@
             $stmt->execute();
 
             return $stmt;
+        }
+
+        public function log_admin_default() {
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $this->def_username = htmlspecialchars(strip_tags($this->def_username));
+            $this->def_password = htmlspecialchars(strip_tags($this->def_password));
+
+            $query = '
+                INSERT INTO default_data SET 
+                    admin_id = :admin_id,
+                    def_username = :def_username,
+                    def_password = :def_password
+            ';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':admin_id', $this->admin_id);
+            $stmt->bindParam(':def_username', $this->def_username);
+            $stmt->bindParam(':def_password', $this->def_password);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function read_admin_default() {
+            $query = '
+                SELECT * FROM default_data WHERE admin_id = :admin_id;
+            ';
+
+            $stmt = $this->conn->prepare($query);
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            try {
+                $stmt->execute();
+                return $stmt;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return $this->error;
+            }
         }
     }

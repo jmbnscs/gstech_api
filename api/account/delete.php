@@ -24,11 +24,16 @@ $account->account_id = $data->account_id;
 // Delete account
 if($account->delete()) {
     echo json_encode(
-    array('message' => 'Account Deleted')
-);
-} else {
+        array ('success' => true)
+    );
+}
+else
+{
     echo json_encode(
-    array('message' => $account->error)
-);
+        array (
+            'success' => false,
+            'error' => $account->error
+        )
+    );
 }
 
