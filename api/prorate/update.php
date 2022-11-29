@@ -1,5 +1,4 @@
 <?php
-    // Headers
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: PUT');
@@ -8,29 +7,29 @@
     include_once '../../config/Database.php';
     include_once '../../models/Prorate.php';
 
-    // Instantiate DB & connect
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate plan object
     $prorate = new Prorate($db);
 
-    // Get raw data
     $data = json_decode(file_get_contents("php://input"));
 
-    // ID to Update
     $prorate->prorate_id = $data->prorate_id;
 
     $prorate->account_id = $data->account_id;
     $prorate->duration = $data->duration;
 
-    // Update Prorate
     if($prorate->update()) {
         echo json_encode(
-            array('message' => 'Prorate Updated')
-    );
-    } else {
+            array ('success' => true)
+        );
+    }
+    else
+    {
         echo json_encode(
-            array('message' => 'Prorate not updated')
+            array (
+                'success' => false,
+                'error' => $payment->error
+            )
         );
     }
