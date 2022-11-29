@@ -146,11 +146,13 @@
                 else if ($row['admin_status_id'] === 3) {
                     $this->message = 'The account has been locked.';
                 }
-                else if ($row['admin_password'] === $this->admin_password)
-                {
-                    $this->admin_id = $row['admin_id'];
-                    ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
-                    $this->update_attempts();
+                else if ($row['hashed'] == 0) {
+                    if ($row['admin_password'] === $this->admin_password)
+                    {
+                        $this->admin_id = $row['admin_id'];
+                        ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                        $this->update_attempts();
+                    }
                 }
                 else if (password_verify($this->admin_password, $row['admin_password'])) {
                     $this->admin_id = $row['admin_id'];
