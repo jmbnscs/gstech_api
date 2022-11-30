@@ -153,6 +153,23 @@
                         ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
                         $this->update_attempts();
                     }
+                    else if (password_verify($this->admin_password, $row['admin_password'])) {
+                        $this->admin_id = $row['admin_id'];
+                        ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                        $this->update_attempts();
+                    }
+                    else {
+                        $this->update_add_attempts();
+                        $login_attempts = $this->getLoginAttempts();
+                        if ($login_attempts === 9) {
+                            $this->update_locked_status();
+                            $this->message = 'The account has been locked.';
+                        }
+                        else {
+                            $this->login_attempts = $login_attempts;
+                            $this->message = 'Invalid Password';
+                        }
+                    }
                 }
                 else if (password_verify($this->admin_password, $row['admin_password'])) {
                     $this->admin_id = $row['admin_id'];
@@ -163,7 +180,7 @@
                 {
                     $this->update_add_attempts();
                     $login_attempts = $this->getLoginAttempts();
-                    if ($login_attempts === 8) {
+                    if ($login_attempts === 9) {
                         $this->update_locked_status();
                         $this->message = 'The account has been locked.';
                     }
@@ -337,6 +354,7 @@
             try {
                 if ($this->isAccountExist()) {
                     $stmt->execute();
+                    $this->update_attempts();
                     return true;
                 }
                 else {
