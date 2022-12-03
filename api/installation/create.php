@@ -21,21 +21,6 @@
     $installation->install_type_id = $data->install_type_id;
     $installation->account_id = $data->account_id;
 
-    if ($installation->install_type_id === 2 || $installation->install_type_id === "2")
-    {
-        $installation->installation_total_charge = 1200;
-        $installation->installation_balance = 1200;
-        $installation->installment = 6;
-        $installation->installation_status_id = 2;
-    }
-    else
-    {
-        $installation->installation_total_charge = 0;
-        $installation->installation_balance = 0;
-        $installation->installment = 0;
-        $installation->installation_status_id = 1;
-    }
-
     // Create post
     if ($installation->create())
     {

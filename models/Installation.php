@@ -26,6 +26,22 @@
         {
             // Clean Data
             $this->install_type_id = htmlspecialchars(strip_tags($this->install_type_id));
+
+            if ($this->install_type_id === 2 || $this->install_type_id === "2")
+            {
+                $this->installation_total_charge = 1200;
+                $this->installation_balance = 1200;
+                $this->installment = 6;
+                $this->installation_status_id = 2;
+            }
+            else
+            {
+                $this->installation_total_charge = 0;
+                $this->installation_balance = 0;
+                $this->installment = 0;
+                $this->installation_status_id = 1;
+            }
+
             $this->installation_total_charge = htmlspecialchars(strip_tags($this->installation_total_charge));
             $this->installation_balance = htmlspecialchars(strip_tags($this->installation_balance));
             $this->installment = htmlspecialchars(strip_tags($this->installment));

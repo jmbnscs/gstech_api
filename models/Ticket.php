@@ -18,6 +18,7 @@
         public $user_level;
 
         public $message;
+        public $error;
 
         # Constructor with DB
         public function __construct($db)
@@ -257,6 +258,32 @@
                 // Print error
                 printf("Error: %s.\n", $stmt->error);
     
+                return false;
+            }
+        }
+
+        public function isTicketNumExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE ticket_num = :ticket_num';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->ticket_num = htmlspecialchars(strip_tags($this->ticket_num));
+            $stmt->bindParam(':ticket_num', $this->ticket_num);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    $this->error = 'Ticket Number already exist.';
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

@@ -17,7 +17,6 @@
 
     $admin->admin_id = $data->admin_id;
     $admin->admin_password = $data->admin_password;
-    $admin->admin_username = $data->admin_username;
 
     if($admin->reset_password()) {
         echo json_encode(

@@ -118,80 +118,6 @@
             return $stmt;
         }
 
-        public function login () 
-        {
-            $query = 'SELECT *
-                FROM ' . $this->table . ' 
-            WHERE
-                admin_username = :admin_username';
-
-            $stmt = $this->conn->prepare($query);
-
-            $stmt->bindParam(':admin_username', $this->admin_username);
-
-            // Execute Query
-            $stmt->execute();
-
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // Set Properties
-            if (!$row) {
-                $this->message = 'Invalid Credentials';
-            }
-            else
-            {
-                if ($row['admin_status_id'] !== 1 && $row['admin_status_id'] !== 3) {
-                    $this->message = 'The account is restricted from logging in.';
-                }
-                else if ($row['admin_status_id'] === 3) {
-                    $this->message = 'The account has been locked.';
-                }
-                else if ($row['hashed'] == 0) {
-                    if ($row['admin_password'] === $this->admin_password)
-                    {
-                        $this->admin_id = $row['admin_id'];
-                        ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
-                        $this->update_attempts();
-                    }
-                    else if (password_verify($this->admin_password, $row['admin_password'])) {
-                        $this->admin_id = $row['admin_id'];
-                        ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
-                        $this->update_attempts();
-                    }
-                    else {
-                        $this->update_add_attempts();
-                        $login_attempts = $this->getLoginAttempts();
-                        if ($login_attempts === 9) {
-                            $this->update_locked_status();
-                            $this->message = 'The account has been locked.';
-                        }
-                        else {
-                            $this->login_attempts = $login_attempts;
-                            $this->message = 'Invalid Password';
-                        }
-                    }
-                }
-                else if (password_verify($this->admin_password, $row['admin_password'])) {
-                    $this->admin_id = $row['admin_id'];
-                    ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
-                    $this->update_attempts();
-                }
-                else
-                {
-                    $this->update_add_attempts();
-                    $login_attempts = $this->getLoginAttempts();
-                    if ($login_attempts === 9) {
-                        $this->update_locked_status();
-                        $this->message = 'The account has been locked.';
-                    }
-                    else {
-                        $this->login_attempts = $login_attempts;
-                        $this->message = 'Invalid Password';
-                    }
-                }
-            }
-        }
-
         # Update Admin
         public function update() 
         {
@@ -236,20 +162,65 @@
             }
         }
 
+        # Login Configs
+        public function login () 
+        {
+            $query = 'SELECT *
+                FROM ' . $this->table . ' 
+            WHERE
+                admin_username = :admin_username';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                $this->message = 'Invalid Credentials';
+            }
+            else
+            {
+                if ($row['admin_status_id'] !== 1 && $row['admin_status_id'] !== 3) {
+                    $this->message = 'The account is restricted from logging in.';
+                }
+                else if ($row['admin_status_id'] === 3) {
+                    $this->message = 'The account has been locked.';
+                }
+                else {
+                    if (password_verify($this->admin_password, $row['admin_password'])) {
+                        $this->admin_id = $row['admin_id'];
+                        ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                        $this->update_attempts();
+                    }
+                    else {
+                        $this->update_add_attempts();
+                        $login_attempts = $this->getLoginAttempts();
+                        if ($login_attempts === 9) {
+                            $this->update_locked_status();
+                            $this->message = 'The account has been locked.';
+                        }
+                        else {
+                            $this->login_attempts = $login_attempts;
+                            $this->message = 'Invalid Password';
+                        }
+                    }
+                }
+            }
+        }
+
         private function update_add_attempts ()
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . ' 
                     SET login_attempts = (login_attempts + 1) 
                     WHERE admin_username = :admin_username;';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
 
-            // Bind data
             $stmt->bindParam(':admin_username', $this->admin_username);
 
             $stmt->execute();
@@ -257,18 +228,14 @@
         
         private function update_attempts ()
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . ' 
                      SET login_attempts = 0 
                      WHERE admin_username = :admin_username';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
 
-            // Bind data
             $stmt->bindParam(':admin_username', $this->admin_username);
 
             $stmt->execute();
@@ -276,18 +243,14 @@
 
         public function update_locked_status ()
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . ' 
                      SET admin_status_id = 3
                      WHERE admin_username = :admin_username';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
 
-            // Bind data
             $stmt->bindParam(':admin_username', $this->admin_username);
 
             $stmt->execute();
@@ -295,28 +258,22 @@
 
         public function update_password() 
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET admin_password = :admin_password,
                     hashed = 1
                     WHERE admin_id = :admin_id;';
     
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
             
-            // Clean data
             $this->admin_password = htmlspecialchars(strip_tags($this->admin_password));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
 
-            // Hash Password
             $options = ['cost' => 12,];
             $this->admin_password = password_hash($this->admin_password, PASSWORD_BCRYPT, $options);
     
-            // Bind data
             $stmt->bindParam(':admin_password', $this->admin_password);
             $stmt->bindParam(':admin_id', $this->admin_id);
     
-            // Execute Query
             try {
                 if ($this->isAccountExist()) {
                     $stmt->execute();
@@ -384,7 +341,7 @@
                 $this->message = 'Admin ID does not exist.';
             }
             else if ($row['hashed'] == 0) {
-                if ($this->admin_password == $row['admin_password']) {
+                if (password_verify($this->admin_password, $row['admin_password'])){
                     return true;
                 }
                 else {
@@ -399,32 +356,41 @@
             }
         }
 
+        private function getLoginAttempts()
+        {
+            $query = 'SELECT login_attempts FROM ' . $this->table . ' WHERE admin_username = :admin_username';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
+            $stmt->bindParam(':admin_username', $this->admin_username);
+
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $row['login_attempts'];
+        }
+
         public function update_status() 
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET 
                         admin_status_id = :admin_status_id,
                         login_attempts = 0
                     WHERE admin_id = :admin_id';
     
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
             
-            // Clean data
             $this->admin_status_id = htmlspecialchars(strip_tags($this->admin_status_id));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
     
-            // Bind data
             $stmt->bindParam(':admin_status_id', $this->admin_status_id);
             $stmt->bindParam(':admin_id', $this->admin_id);
     
-            // Execute query
             if($stmt->execute()) {
                 return true;
             }
             else {
-                // Print error
                 printf("Error: %s.\n", $stmt->error);
     
                 return false;
@@ -458,7 +424,7 @@
             }
         }
 
-        private function isAccountExist()
+        public function isAccountExist()
         {
             $query = 'SELECT * FROM ' . $this->table . ' WHERE admin_id = :admin_id';
 
@@ -481,20 +447,5 @@
                 $this->error = $e->getMessage();
                 return false;
             }
-        }
-
-        private function getLoginAttempts()
-        {
-            $query = 'SELECT login_attempts FROM ' . $this->table . ' WHERE admin_username = :admin_username';
-
-            $stmt = $this->conn->prepare($query);
-
-            $this->admin_username = htmlspecialchars(strip_tags($this->admin_username));
-            $stmt->bindParam(':admin_username', $this->admin_username);
-
-            $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            return $row['login_attempts'];
         }
     }
