@@ -28,10 +28,13 @@
     // Update account
     if($customer->update()) {
         echo json_encode(
-            array('message' => 'Customer Updated')
-    );
+            array('success' => true)
+        );
     } else {
         echo json_encode(
-            array('message' => 'Customer not updated')
+            array(
+                'success' => false,
+                'error' => $customer->error
+            )
         );
     }

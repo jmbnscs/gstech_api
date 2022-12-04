@@ -205,13 +205,17 @@
             $stmt->bindParam(':email', $this->email);
     
             // Execute query
-            if($stmt->execute()) {
-                return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-    
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
