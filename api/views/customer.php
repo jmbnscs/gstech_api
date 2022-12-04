@@ -33,8 +33,9 @@
                 'account_id' => $account_id,
                 'customer_name' => $first_name . ' ' . $last_name,
                 'plan' => $plan,
-                'balance' => ($balance == null) ? $balance = '0.00' : $balance = $balance,
-                'status' => $status
+                'area' => $area,
+                'status' => $status,
+                'balance' => ($balance == null) ? $balance = '0.00' : $balance = $balance
             );
 
             // Push to "data"
