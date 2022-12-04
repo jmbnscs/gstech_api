@@ -19,8 +19,6 @@
     $account->plan_id = $data->plan_id;
     $account->connection_id = $data->connection_id;
     $account->area_id = $data->area_id;
-    $account->account_type = 2;
-    $account->account_status_id = 1;
 
     // Create Account
     if ($account->import())

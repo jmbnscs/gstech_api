@@ -74,8 +74,8 @@
             $this->plan_id = htmlspecialchars(strip_tags($this->plan_id));
             $this->connection_id = htmlspecialchars(strip_tags($this->connection_id));
             $this->area_id = htmlspecialchars(strip_tags($this->area_id));
-            $this->account_type = htmlspecialchars(strip_tags($this->account_type));
-            $this->account_status_id = htmlspecialchars(strip_tags($this->account_status_id));
+            $this->account_type = 2;
+            $this->account_status_id = 1;
 
             $query = 'INSERT INTO ' . 
                     $this->table . '
