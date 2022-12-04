@@ -74,6 +74,17 @@
             return $stmt;
         }
 
+        public function read_active()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE plan_status_id = 1';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         public function read_single () 
         {
             $query = 'SELECT
