@@ -203,4 +203,40 @@
                 return false;
             }
         }
+
+        public function update_import() 
+        {
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->installation_status_id = htmlspecialchars(strip_tags($this->installation_status_id));
+            $this->installation_balance = htmlspecialchars(strip_tags($this->installation_balance));
+
+            if ($this->installation_status_id == 1) {
+                $this->installation_balance = 0;
+                $this->installment = 0;
+            }
+            else {
+                $this->installment = floatval($this->installation_balance) / 200;
+            }
+
+            $query = 'UPDATE ' . $this->table . '
+                    SET installation_status_id = installation_status_id,
+                        installment = installment,
+                        installation_balance = :installation_balance
+                    WHERE account_id = :account_id';
+    
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':installation_status_id', $this->installation_status_id);
+            $stmt->bindParam(':installment', $this->installment);
+            $stmt->bindParam(':installation_balance', $this->installation_balance);
+    
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
     }

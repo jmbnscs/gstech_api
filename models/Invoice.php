@@ -25,6 +25,8 @@
         public $running_balance;
         public $payment_date;
 
+        public $error;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -98,6 +100,67 @@
             printf("Error: %s.\n", $stmt->error);
 
             return false;
+        }
+
+        public function create_import ()
+        {
+            // Clean Data
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->billing_period_end = htmlspecialchars(strip_tags($this->billing_period_end));
+            $this->total_bill = htmlspecialchars(strip_tags($this->total_bill));
+            $this->running_balance = htmlspecialchars(strip_tags($this->running_balance));
+
+            (floatval($this->running_balance) <= 0 ) ? $this->invoice_status_id = 1 : $this->invoice_status_id = 2;
+
+            $this->setDates();
+            $this->setInvoiceID();
+
+            // Create Query
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    invoice_id = :invoice_id,
+                    account_id = :account_id,
+                    billing_period_start = :billing_period_start,
+                    billing_period_end = :billing_period_end,
+                    disconnection_date = :disconnection_date,
+                    previous_bill = 0.00,
+                    previous_payment = 0.00,
+                    balance = 0.00,
+                    secured_cash = 0.00,
+                    subscription_amount = 0.00,
+                    prorated_charge = 0.00,
+                    installation_charge = 0.00,
+                    total_bill = :total_bill,
+                    running_balance = :running_balance,
+                    invoice_status_id = :invoice_status_id';
+
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            // Bind Data
+            $stmt->bindParam(':invoice_id', $this->invoice_id);
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':billing_period_start', $this->billing_period_start);
+            $stmt->bindParam(':billing_period_end', $this->billing_period_end);
+            $stmt->bindParam(':disconnection_date', $this->disconnection_date);
+            $stmt->bindParam(':total_bill', $this->total_bill);
+            $stmt->bindParam(':running_balance', $this->running_balance);
+            $stmt->bindParam(':invoice_status_id', $this->invoice_status_id);
+            
+            try {
+                $stmt->execute();
+                $this->addBillCount();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        private function setDates() {
+            $this->billing_period_start = date("Y-m-d", strtotime("-1 month", strtotime($this->billing_period_end)));
+            $this->disconnection_date = date("Y-m-d", strtotime("+1 day", strtotime($this->billing_period_end)));
         }
 
         # Get Invoice 

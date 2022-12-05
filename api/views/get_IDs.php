@@ -18,6 +18,7 @@
     $views->connection_name = $data->connection_name;
     $views->install_type_name = $data->install_type_name;
     $views->area_name = $data->area_name;
+    $views->install_status = $data->install_status;
 
     $result = $views->getImportIDs();
 

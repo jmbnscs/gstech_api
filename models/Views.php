@@ -16,6 +16,7 @@
         public $connection_name;
         public $install_type_name;
         public $area_name;
+        public $install_status;
 
         # Constructor with DB
         public function __construct($db)
@@ -289,7 +290,7 @@
         # Get Import IDs
         public function getImportIDs()
         {
-            $query = "SELECT (SELECT plan_id FROM plan WHERE plan_name = :plan_name) AS plan_id, (SELECT connection_id FROM connection WHERE connection_name = :connection_name) AS connection_id, (SELECT area_id FROM area WHERE area_name = :area_name) AS area_id, (SELECT install_type_id FROM installation_type WHERE install_type_name = :install_type_name) AS install_type_id";
+            $query = "SELECT (SELECT plan_id FROM plan WHERE plan_name = :plan_name) AS plan_id, (SELECT connection_id FROM connection WHERE connection_name = :connection_name) AS connection_id, (SELECT area_id FROM area WHERE area_name = :area_name) AS area_id, (SELECT install_type_id FROM installation_type WHERE install_type_name = :install_type_name) AS install_type_id, (SELECT status_id FROM installation_status WHERE status_name = :install_status) AS install_status_id";
             
             $stmt = $this->conn->prepare($query);
 
@@ -297,11 +298,13 @@
             $this->connection_name = htmlspecialchars(strip_tags($this->connection_name));
             $this->area_name = htmlspecialchars(strip_tags($this->area_name));
             $this->install_type_name = htmlspecialchars(strip_tags($this->install_type_name));
+            $this->install_status = htmlspecialchars(strip_tags($this->install_status));
 
             $stmt->bindParam(':plan_name', $this->plan_name);
             $stmt->bindParam(':connection_name', $this->connection_name);
             $stmt->bindParam(':area_name', $this->area_name);
             $stmt->bindParam(':install_type_name', $this->install_type_name);
+            $stmt->bindParam(':install_status', $this->install_status);
 
             $stmt->execute();
             return $stmt;

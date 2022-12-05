@@ -11,6 +11,7 @@ include_once '../../models/Installation.php';
 include_once '../../models/Ratings.php';
 
 include_once '../../models/Views.php';
+include_once '../../models/Invoice.php';
 
 $database = new Database();
 $db = $database->connect();
@@ -23,11 +24,13 @@ $install = new Installation ($db);
 $rate = new Ratings ($db);
 
 $views = new Views ($db);
+$invoice = new Invoice ($db);
 
-$views->plan_name = $data->plan_id;
-$views->connection_name = $data->connection_id;
-$views->install_type_name = $data->install_type_id;
-$views->area_name = $data->area_id;
+$views->plan_name = $data->plan_name;
+$views->connection_name = $data->connection_name;
+$views->install_type_name = $data->install_type_name;
+$views->area_name = $data->area_name;
+$views->install_status = $data->install_status;
 $result = $views->getImportIDs();
 
 $num = $result->rowCount();
@@ -40,6 +43,7 @@ if ($num > 0)
     // $bill_start->format('F');
     $start_date = new DateTime($data->start_date);
     $birthdate = new DateTime($data->birthdate);
+    $billing_period_end = new DateTime($data->billing_end_date);
 
     $account->account_id = $data->account_id;
     $account->start_date = $start_date->format('Y-m-d');
@@ -62,14 +66,41 @@ if ($num > 0)
             $install->account_id = $data->account_id;
     
             if ($install->create()) {
+                if ($install_type_id == 2) {
+                    $install->installation_balance = $data->installation_balance;
+                    $install->installation_status_id = $install_status_id;
+
+                    $install->update_import();
+                }
+
                 $rate->account_id = $data->account_id;
     
                 if ($rate->create()) {
-                    echo json_encode(
-                        array ('success' => true)
-                    );
+                    $invoice->account_id = $data->$account_id;
+                    $invoice->billing_period_end = $billing_period_end->format('Y-m-d');
+                    $invoice->total_bill = $data->total_bill;
+                    $invoice->running_balance = $data->running_balance;
+
+                    if ($invoice->create_import()) {
+                        echo json_encode(
+                            array ('success' => true)
+                        );
+                    }
+                    else {
+                        echo json_encode(
+                            array (
+                                'success' => false,
+                                'error' => $invoice->error
+                            )
+                        );
+                    }
                 }
                 else {
+                    $customer->delete();
+                    $account->delete();
+                    $install->delete();
+                    $rate->delete();
+                    
                     echo json_encode(
                         array (
                             'success' => false,
@@ -77,8 +108,12 @@ if ($num > 0)
                         )
                     );
                 }
+                
             }
             else {
+                $customer->delete();
+                $account->delete();
+                $install->delete();
                 echo json_encode(
                     array (
                         'success' => false,
@@ -88,6 +123,9 @@ if ($num > 0)
             }
         }
         else {
+            $customer->delete();
+            $account->delete();
+
             echo json_encode(
                 array (
                     'success' => false,
@@ -97,6 +135,7 @@ if ($num > 0)
         }
     }
     else {
+        $account->delete();
         echo json_encode(
             array (
                 'success' => false,
