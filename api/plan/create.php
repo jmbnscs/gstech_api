@@ -27,7 +27,7 @@
     {
         echo json_encode(
             array (
-                'message' => 'Plan Created',
+                'success' => true,
                 'plan_id' => $plan->plan_id
             )
         );
@@ -35,6 +35,9 @@
     else
     {
         echo json_encode(
-            array ('message' => 'Plan Not Created')
+            array (
+                'success' => false,
+                'error' => $plan->error
+            )
         );
     }

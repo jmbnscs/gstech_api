@@ -1,11 +1,9 @@
 <?php
     class Plan 
     {
-        // DB Stuff
         private $conn;
         private $table = 'plan';
 
-        // Properties
         public $plan_id;
         public $plan_name;
         public $bandwidth;
@@ -13,21 +11,19 @@
         public $rate_per_minute;
         public $plan_status_id;
 
-        // Constructor with DB
+        public $error;
+
         public function __construct($db)
         {
             $this->conn = $db;
         }
 
-        # Create Post
         public function create ()
         {
-            // Clean Data
             $this->plan_name = htmlspecialchars(strip_tags($this->plan_name));
             $this->bandwidth = htmlspecialchars(strip_tags($this->bandwidth));
             $this->price = htmlspecialchars(strip_tags($this->price));
 
-            // Create Query
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
@@ -36,25 +32,20 @@
                     price = :price,
                     rate_per_minute = plan_compute_rpm(:price)';
 
-            // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
-            // Bind Data
             $stmt->bindParam(':plan_name', $this->plan_name);
             $stmt->bindParam(':bandwidth', $this->bandwidth);
             $stmt->bindParam(':price', $this->price);
 
-            // Execute Query
-            if ($stmt->execute())
-            {
+            try {
+                $stmt->execute();
                 $this->getID();
                 return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
             }
-
-            // Print error if something goes wrong
-            printf("Error: %s.\n", $stmt->error);
-
-            return false;
         }
 
         # Get Plans
@@ -223,5 +214,31 @@
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             $this->plan_id = $row['plan_id'];
+        }
+
+        public function isPlanNameExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE plan_name = :plan_name';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->plan_name = htmlspecialchars(strip_tags($this->plan_name));
+            $stmt->bindParam(':plan_name', $this->plan_name);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    $this->error = 'Plan Name already exist.';
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
         }
 }
