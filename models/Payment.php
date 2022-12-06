@@ -1,11 +1,9 @@
 <?php
     class Payment 
     {
-        // DB Stuff
         private $conn;
         private $table = 'payment';
 
-        // Properties
         public $payment_id;
         public $amount_paid;
         public $payment_reference_id;
@@ -15,7 +13,6 @@
 
         public $error;
 
-        // Constructor with DB
         public function __construct($db)
         {
             $this->conn = $db;
@@ -229,6 +226,31 @@
 
             $this->payment_id = htmlspecialchars(strip_tags($this->payment_id));
             $stmt->bindParam(':payment_id', $this->payment_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function isPayRefExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE payment_reference_id = :payment_reference_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
+            $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
 
             try {
                 $stmt->execute();
