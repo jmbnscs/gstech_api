@@ -20,8 +20,8 @@
 
     // ID to Update
     $installation->account_id = $data->account_id;
-    $installation->balance  = $data->balance;
-    $installation->status_id = $data->status_id;
+    $installation->installation_balance  = $data->installation_balance;
+    $installation->installation_status_id = $data->installation_status_id;
 
     // Update account
     if($installation->update_import()) {

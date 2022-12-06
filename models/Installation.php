@@ -219,8 +219,8 @@
             }
 
             $query = 'UPDATE ' . $this->table . '
-                    SET installation_status_id = installation_status_id,
-                        installment = installment,
+                    SET installation_status_id = :installation_status_id,
+                        installment = :installment,
                         installation_balance = :installation_balance
                     WHERE account_id = :account_id';
     

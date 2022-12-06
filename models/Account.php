@@ -241,7 +241,7 @@
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($row) {
-                    $this->error = 'Account ID already exist.';
+                    //$this->error = 'Account ID already exist.';
                     return true;
                 }
                 else {

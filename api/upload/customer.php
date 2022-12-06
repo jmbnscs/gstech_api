@@ -76,7 +76,7 @@ if ($num > 0)
                 $rate->account_id = $data->account_id;
     
                 if ($rate->create()) {
-                    $invoice->account_id = $data->$account_id;
+                    $invoice->account_id = $data->account_id;
                     $invoice->billing_period_end = $billing_period_end->format('Y-m-d');
                     $invoice->total_bill = $data->total_bill;
                     $invoice->running_balance = $data->running_balance;
@@ -87,6 +87,7 @@ if ($num > 0)
                         );
                     }
                     else {
+                        $invoice->delete();
                         echo json_encode(
                             array (
                                 'success' => false,

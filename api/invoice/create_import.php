@@ -20,7 +20,7 @@
     $invoice->running_balance = $data->running_balance;
 
     // Update account
-    if($account->create_import()) {
+    if($invoice->create_import()) {
         echo json_encode(
             array('success' => true)
         );
@@ -28,7 +28,7 @@
         echo json_encode(
             array(
                 'success' => false,
-                'error' => $account->error
+                'error' => $invoice->error
             )
         );
     }
