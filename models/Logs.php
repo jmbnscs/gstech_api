@@ -163,6 +163,20 @@
             return $stmt;
         }
 
+        public function read_admin_all_logs() {
+            $query = '
+                SELECT * FROM admin_logs WHERE admin_id = :admin_id ORDER BY date_accessed DESC;
+            ';
+
+            $stmt = $this->conn->prepare($query);
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         public function log_admin_default() {
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $this->def_username = htmlspecialchars(strip_tags($this->def_username));
