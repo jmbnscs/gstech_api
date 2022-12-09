@@ -11,6 +11,8 @@
         public $inclusion_code;
         public $prorate_id;
         public $account_id;
+        public $status_name;
+        public $user_role;
 
         public $plan_name;
         public $connection_name;
@@ -309,5 +311,21 @@
             $stmt->execute();
             return $stmt;
 
+        }
+
+        # Admin Details
+        public function admin_user_level()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_admin_details WHERE role = :user_role';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->bindParam(':user_role', $this->user_role);
+
+            $stmt->execute();
+
+            return $stmt;
         }
     }
