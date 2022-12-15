@@ -328,4 +328,18 @@
 
             return $stmt;
         }
+
+        #Export Account Details
+        public function customer_export()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_export_customers';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
     }
