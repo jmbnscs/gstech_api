@@ -3,9 +3,9 @@
     {
         // DB Params
         private $host = 'localhost';
-        private $db_name = 'id20026740_gstech_logs';
-        private $username = 'id20026740_logs';
-        private $password = '9f]\zm-QoWT=SO6}';
+        private $db_name = 'u575223139_gstech_logs';
+        private $username = 'u575223139_gstechlogs';
+        private $password = '@Le~Q~?oV8';
         private $conn;
 
         // DB Connect

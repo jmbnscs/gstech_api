@@ -3,9 +3,9 @@
     {
         // DB Params
         private $host = 'localhost';
-        private $db_name = 'id20026740_gstech_bms_db';
-        private $username = 'id20026740_bms';
-        private $password = 'cSuXE8v#r*aW7Wb-';
+        private $db_name = 'u575223139_gstech_bms_db';
+        private $username = 'u575223139_gstechbms';
+        private $password = 'Mq4I2+5[jM]';
         private $conn;
 
         // DB Connect
