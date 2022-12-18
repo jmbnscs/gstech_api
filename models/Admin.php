@@ -183,7 +183,7 @@
             }
             else
             {
-                if ($row['admin_status_id'] !== 1 && $row['admin_status_id'] !== 3) {
+                if ($row['admin_status_id'] != 1 && $row['admin_status_id'] != 3) {
                     $this->message = 'The account is restricted from logging in.';
                 }
                 else if ($row['admin_status_id'] === 3) {
