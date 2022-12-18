@@ -163,14 +163,14 @@
                 {
                     $this->message = 'The account is restricted from logging in.';
                 }
-                else if ($row['customer_password'] === $this->customer_password)
+                else if ($row['customer_password'] == $this->customer_password)
                 {
                     $this->account_id = $row['account_id'];
-                    ($row['pw_changed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                    ($row['pw_changed'] == 0) ? $this->message = 'change password' : $this->message = 'success';
                 }
                 else if (password_verify($this->customer_password, $row['customer_password'])) {
                     $this->account_id = $row['account_id'];
-                    ($row['pw_changed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                    ($row['pw_changed'] == 0) ? $this->message = 'change password' : $this->message = 'success';
                 }
                 else
                 {
@@ -307,7 +307,10 @@
                 $this->message = 'Account ID does not exist.';
             }
             else if ($row['pw_changed'] == 0) {
-                if ($this->customer_password == $row['customer_password']) {
+                if (password_verify($this->customer_password, $row['customer_password'])) {
+                    return true;
+                }
+                else if ($this->customer_password == $row['customer_password']) {
                     return true;
                 }
                 else {
