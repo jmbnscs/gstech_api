@@ -333,7 +333,7 @@
         public function customer_export()
         {
             // Create Query
-            $query = 'SELECT * FROM view_export_customers';
+            $query = 'SELECT * FROM view_export_accounts';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
