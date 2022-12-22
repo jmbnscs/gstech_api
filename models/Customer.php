@@ -367,4 +367,84 @@
                 return $row['account_status_id'];
             }
         }
+
+        # Customer Login
+        public function verify_email()
+        {
+            $query = 'SELECT
+                email FROM ' . 
+            $this->table . ' 
+            WHERE
+                account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            // Execute Query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->account_status_id = $this->getAccountStatus();
+
+            // Set Properties
+            if (!$row)
+            {
+                $this->message = 'Invalid Credentials';
+            }
+            else
+            {
+                if ($this->account_status_id === 2) 
+                {
+                    $this->message = 'The account is restricted from logging in.';
+                }
+                else if ($row['email'] === $this->email)
+                {
+                    $this->message = 'success';
+                }
+                else {
+                    $this->message = 'Incorrect Email';
+                }
+            }
+        }
+
+        public function forgot_password() 
+        {
+            // Create query
+            $query = 'UPDATE ' . $this->table . '
+                    SET customer_password = :customer_password,
+                    pw_changed = 0
+                    WHERE account_id = :account_id';
+    
+            // Prepare statement
+            $stmt = $this->conn->prepare($query);
+            
+            // Clean data
+            $this->customer_password = htmlspecialchars(strip_tags($this->customer_password));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            // Hash Password
+            $options = ['cost' => 12,];
+            $this->customer_password = password_hash($this->customer_password, PASSWORD_BCRYPT, $options);
+    
+            // Bind data
+            $stmt->bindParam(':customer_password', $this->customer_password);
+            $stmt->bindParam(':account_id', $this->account_id);
+    
+            // Execute Query
+            try {
+                if ($this->isAccountExist()) {
+                    $stmt->execute();
+                    return true;
+                }
+                else {
+                    $this->error = 'Account ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
     }

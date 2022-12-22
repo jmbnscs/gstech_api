@@ -746,4 +746,30 @@
 
             $this->invoice_id = $row['invoice_id'];
         }
+
+        public function isInvoiceIDExist()
+        {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE invoice_id = :invoice_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
+            $stmt->bindParam(':invoice_id', $this->invoice_id);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    return true;
+                }
+                else {
+                    $this->error = 'Invoice ID does not exist.';
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
     }

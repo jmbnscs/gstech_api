@@ -161,6 +161,24 @@
             return $stmt;
         }
 
+        public function read_single_admin()
+        {
+            $query = 'SELECT 
+                *
+            FROM
+             ' . $this->table . ' 
+            WHERE 
+                admin_id = :admin_id';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $stmt->bindParam(':admin_id', $this->admin_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Ticket
         public function update() 
         {

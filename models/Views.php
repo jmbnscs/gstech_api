@@ -159,7 +159,7 @@
         public function prorate()
         {
             // Create Query
-            $query = 'SELECT * FROM view_prorate_details WHERE status = "UNCHARGED"';
+            $query = 'SELECT * FROM view_prorate_details WHERE status = "Untagged"';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -323,6 +323,20 @@
             $stmt = $this->conn->prepare($query);
             
             $stmt->bindParam(':user_role', $this->user_role);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        #Export Account Details
+        public function customer_export()
+        {
+            // Create Query
+            $query = 'SELECT * FROM view_export_customers';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
 
             $stmt->execute();
 

@@ -19,6 +19,10 @@
         public $def_username;
         public $def_password;
 
+        public $id;
+        public $email;
+        public $password;
+
         public $error;
 
         public function __construct($db)
@@ -212,6 +216,24 @@
             $stmt = $this->conn->prepare($query);
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $stmt->bindParam(':admin_id', $this->admin_id);
+
+            try {
+                $stmt->execute();
+                return $stmt;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return $this->error;
+            }
+        }
+
+        public function get_mail_auth() {
+            $query = '
+                SELECT * FROM mail_auth WHERE id = :id;
+            ';
+
+            $stmt = $this->conn->prepare($query);
+            $this->id = htmlspecialchars(strip_tags($this->id));
+            $stmt->bindParam(':id', $this->id);
 
             try {
                 $stmt->execute();

@@ -99,6 +99,22 @@
             return $stmt;
         }
 
+        public function read_by_invoice () 
+        {
+            $query = 'SELECT
+                * FROM ' . 
+            $this->table . ' 
+            WHERE invoice_id = :invoice_id';
+
+            $stmt = $this->conn->prepare($query);
+            $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
+            $stmt->bindParam(':invoice_id', $this->invoice_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         public function read_untagged () {
             $query = 'SELECT * FROM ' . $this->table . ' WHERE tagged = 0';
 
