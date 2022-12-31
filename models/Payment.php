@@ -88,7 +88,7 @@
             $query = 'SELECT
                 * FROM ' . 
             $this->table . ' 
-            WHERE account_id = :account_id';
+            WHERE account_id = :account_id ORDER BY payment_date DESC';
 
             $stmt = $this->conn->prepare($query);
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
