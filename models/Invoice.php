@@ -226,7 +226,7 @@
                 * FROM ' . 
             $this->table . ' 
             WHERE
-                account_id = :account_id';
+                account_id = :account_id ORDER BY disconnection_date DESC';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);

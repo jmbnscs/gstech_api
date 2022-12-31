@@ -305,4 +305,20 @@
                 return false;
             }
         }
+
+        public function ticket_display()
+        {
+            $query = 'SELECT ticket_num, (SELECT concern_category FROM concerns WHERE concern_id = t.concern_id) AS category, DATE_FORMAT(date_filed, "%M %d, %Y") AS date_filed, DATE_FORMAT(date_resolved, "%M %d, %Y") AS date_resolved, (SELECT status_name FROM ticket_status WHERE status_id = t.ticket_status_id) AS status FROM 
+             ' . $this->table . ' AS t 
+            WHERE 
+                account_id = :account_id ORDER BY date_filed ASC';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
     }
