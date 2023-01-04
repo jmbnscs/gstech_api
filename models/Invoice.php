@@ -579,21 +579,36 @@
 
         private function setRunningBalance()
         {
-            // Create query
-            $query = 'CALL invoice_set_running_bal (:account_id, :invoice_id)';
+            $query = 'SELECT secured_cash, subscription_amount, prorated_charge, installation_charge FROM invoice WHERE account_id = :account_id AND invoice_id = :invoice_id';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
-            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
-            $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
-
-            // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':invoice_id', $this->invoice_id);
 
-            // Execute query
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            extract($row);
+
+            $to_add = floatval($subscription_amount) + floatval($installation_charge);
+            $to_sub = floatval($secured_cash) + floatval($prorated_charge);
+            $running_balance = $to_add - $to_sub;
+
+            if ($running_balance < 0) {
+                $running_balance = 0.00;
+            }
+
+            $running_balance = number_format($running_balance, 2, '.', '');
+
+            $query = 'UPDATE invoice SET running_balance = :running_balance WHERE invoice_id = :invoice_id AND account_id = :account_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':invoice_id', $this->invoice_id);
+            $stmt->bindParam(':running_balance', $running_balance);
+
             $stmt->execute();
 
             $stmt->closeCursor();
