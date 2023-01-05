@@ -614,45 +614,155 @@
             $stmt->closeCursor();
         }
 
-        public function test () 
-        {
-            $query = 'SELECT secured_cash, subscription_amount, prorated_charge, installation_charge FROM invoice WHERE account_id = :account_id AND invoice_id = :invoice_id';
+        // public function test () 
+        // {
+        //     $query = 'SELECT secured_cash, subscription_amount, prorated_charge, installation_charge FROM invoice WHERE account_id = :account_id AND invoice_id = :invoice_id';
 
+        //     $stmt = $this->conn->prepare($query);
+
+        //     $stmt->bindParam(':account_id', $this->account_id);
+        //     $stmt->bindParam(':invoice_id', $this->invoice_id);
+
+        //     $stmt->execute();
+
+        //     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        //     extract($row);
+
+        //     $to_add = floatval($subscription_amount) + floatval($installation_charge);
+        //     $to_sub = floatval($secured_cash) + floatval($prorated_charge);
+        //     $running_balance = $to_add - $to_sub;
+
+        //     if ($running_balance < 0) {
+        //         $running_balance = 0.00;
+        //     }
+
+        //     $running_balance = number_format($running_balance, 2, '.', '');
+
+        //     $query = 'UPDATE invoice SET running_balance = :running_balance WHERE invoice_id = :invoice_id AND account_id = :account_id';
+
+        //     $stmt = $this->conn->prepare($query);
+
+        //     $stmt->bindParam(':account_id', $this->account_id);
+        //     $stmt->bindParam(':invoice_id', $this->invoice_id);
+        //     $stmt->bindParam(':running_balance', $running_balance);
+
+        //     try {
+        //         $stmt->execute();
+        //         return true;
+        //     } catch (Exception $e) {
+        //         $this->error = $e->getMessage();
+        //         return false;
+        //     }
+        // }
+
+        public $tot_bill;
+        public $temp_invoice;
+        public $seq;
+        public $run_bal;
+        public $temp_paid;
+
+        public function test () {
+            $query = 'SELECT invoice_count_unpaid(:account_id) AS counter';
             $stmt = $this->conn->prepare($query);
-
             $stmt->bindParam(':account_id', $this->account_id);
-            $stmt->bindParam(':invoice_id', $this->invoice_id);
-
             $stmt->execute();
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            extract($row);
+            $counter = $row['counter'];
+            $update_once = 1;
+            $updated_id = '';
+            $temp_bal = 0.00;
 
-            $to_add = floatval($subscription_amount) + floatval($installation_charge);
-            $to_sub = floatval($secured_cash) + floatval($prorated_charge);
-            $running_balance = $to_add - $to_sub;
+            if ($counter > 1) {
+                while ($counter > 0) {
+                    if ($update_once == 1) {
+                        $this->seq = 'DESC';
+                        $this->getUnpaidInvoiceAndBill();
+                        $this->getRunningBalanceAndAmountPaid();
 
-            if ($running_balance < 0) {
-                $running_balance = 0.00;
+                        $updated_id = $this->temp_invoice;
+                        $temp_bal = floatval($this->amount_paid);
+                        $update_once = 0;
+
+                        if (floatval($this->tot_bill) <= floatval($this->amount_paid)) {
+                            $this->updateInvoice((floatval($this->temp_paid) + floatval($this->amount_paid)), 1, 1, $updated_id);
+                        }
+                    }
+                }
             }
+            // return $stmt;
 
-            $running_balance = number_format($running_balance, 2, '.', '');
+            // $counter = 0;
 
-            $query = 'UPDATE invoice SET running_balance = :running_balance WHERE invoice_id = :invoice_id AND account_id = :account_id';
+            // $stmt->bindParam(':account_id', $this->account_id);
+            // $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
+            // $stmt->bindParam(':amount_paid', $this->amount_paid);
+            // $stmt->bindParam(':payment_date', $this->payment_date);
+        }
+
+        private function updateInvoice($amount_paid, $update_once, $status, $updated_id)
+        {
+            $query = '';
+            if ($update_once == 1) {
+                if ($status == 1) {
+                    $query = 'UPDATE invoice SET invoice_status_id = 1, payment_reference_id = :payment_reference_id, amount_paid = :amount_paid, running_balance = :run_bal, payment_date = :payment_date WHERE invoice_id = :invoice_id';
+                }
+                else {
+                    $query = 'UPDATE invoice SET payment_reference_id = :payment_reference_id, amount_paid = :amount_paid, running_balance = :run_bal, payment_date = :payment_date WHERE invoice_id = :invoice_id';
+                }
+            }
+            else {
+                if ($status == 1) {
+                    $query = 'UPDATE invoice SET invoice_status_id = 1, invoice_reference_id = :updated_id, running_balance = :run_bal WHERE invoice_id = :invoice_id';
+                }
+                else {
+                    $query = 'UPDATE invoice SET invoice_reference_id = :updated_id, running_balance = :run_bal WHERE invoice_id = :invoice_id';
+                }
+            }
 
             $stmt = $this->conn->prepare($query);
 
-            $stmt->bindParam(':account_id', $this->account_id);
-            $stmt->bindParam(':invoice_id', $this->invoice_id);
-            $stmt->bindParam(':running_balance', $running_balance);
-
-            try {
-                $stmt->execute();
-                return true;
-            } catch (Exception $e) {
-                $this->error = $e->getMessage();
-                return false;
+            if ($update_once == 1) {
+                $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
+                $stmt->bindParam(':amount_paid', $amount_paid);
+                $stmt->bindParam(':payment_date', $this->payment_date);
             }
+            else {
+                $stmt->bindParam(':invoice_reference_id', $updated_id);
+            }
+            
+            $stmt->bindParam(':run_bal', $this->run_bal);
+            $stmt->bindParam(':invoice_id', $this->temp_invoice);
+
+            $stmt->execute();
+
+        }
+
+        private function getRunningBalanceAndAmountPaid()
+        {
+            $query = 'SELECT running_balance, amount_paid FROM invoice WHERE invoice_id = :invoice_id';
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':invoice_id', $this->temp_invoice);
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->run_bal = $row['running_balance'];
+            $this->temp_paid = $row['amount_paid'];
+        }
+
+        private function getUnpaidInvoiceAndBill()
+        {
+            $query = 'CALL invoice_get_unpaid_bill_and_id(:account_id, :seq, @total_bill, @invoice_id)';
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':seq', $this->seq);
+            $stmt->execute();
+            $stmt->closeCursor();
+
+            $row = $this->conn->query('SELECT @total_bill AS total_bill, @invoice_id AS invoice_id')->fetch(PDO::FETCH_ASSOC);
+
+            $this->tot_bill = $row['total_bill'];
+            $this->temp_invoice = $row['invoice_id'];
         }
 
         private function addBillCount()
