@@ -183,22 +183,22 @@
             }
             else
             {
-                if ($row['admin_status_id'] !== 1 && $row['admin_status_id'] !== 3) {
+                if ($row['admin_status_id'] != 1 && $row['admin_status_id'] != 3) {
                     $this->message = 'The account is restricted from logging in.';
                 }
-                else if ($row['admin_status_id'] === 3) {
+                else if ($row['admin_status_id'] == 3) {
                     $this->message = 'The account has been locked.';
                 }
                 else {
                     if (password_verify($this->admin_password, $row['admin_password'])) {
                         $this->admin_id = $row['admin_id'];
-                        ($row['hashed'] === 0) ? $this->message = 'change password' : $this->message = 'success';
+                        ($row['hashed'] == 0) ? $this->message = 'change password' : $this->message = 'success';
                         $this->update_attempts();
                     }
                     else {
                         $this->update_add_attempts();
                         $login_attempts = $this->getLoginAttempts();
-                        if ($login_attempts === 9) {
+                        if ($login_attempts == 9) {
                             $this->update_locked_status();
                             $this->message = 'The account has been locked.';
                         }
