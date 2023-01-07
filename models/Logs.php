@@ -13,6 +13,7 @@
         public $invoice_id;
         public $email_sent;
         public $status_id;
+        public $page_accessed;
         public $date_accessed;
         public $today_date;
 
