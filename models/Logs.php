@@ -13,6 +13,7 @@
         public $invoice_id;
         public $email_sent;
         public $status_id;
+        public $page_accessed;
         public $date_accessed;
         public $today_date;
 
@@ -155,7 +156,7 @@
 
         public function read_admin_log() {
             $query = '
-                SELECT * FROM admin_logs WHERE admin_id = :admin_id ORDER BY date_accessed DESC LIMIT 6;
+                SELECT * FROM admin_logs WHERE admin_id = :admin_id AND page_accessed != "Login" ORDER BY date_accessed DESC LIMIT 6;
             ';
 
             $stmt = $this->conn->prepare($query);

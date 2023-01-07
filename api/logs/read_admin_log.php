@@ -38,10 +38,11 @@
                 'ip_address' => $ip_address,
                 'user_agent' => $user_agent,
                 'date_accessed' => $date_accessed
-        );
+            );
 
             // Push to "data"
             array_push($arr, $data);
+            
         }
 
         // Turn to JSON & Output
