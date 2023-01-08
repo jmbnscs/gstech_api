@@ -30,7 +30,7 @@
         public function customer()
         {
             // Create Query
-            $query = 'SELECT * FROM customer_details';
+            $query = 'SELECT * FROM customer_details ORDER BY start_date DESC';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
