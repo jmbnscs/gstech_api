@@ -10,6 +10,8 @@
         public $technical_support_access;
         public $customer_access;
 
+        public $error;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -153,6 +155,31 @@
                 // Print error
                 printf("Error: %s.\n", $stmt->error);
 
+                return false;
+            }
+        }
+
+        public function isConcernCategoryExist() {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE concern_category = :concern_category';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->concern_category = htmlspecialchars(strip_tags($this->concern_category));
+            $stmt->bindParam(':concern_category', $this->concern_category);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    $this->error = 'Concern category already exist.';
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

@@ -9,6 +9,8 @@
         public $inclusion_code;
         public $inclusion_name;
 
+        public $error;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -133,6 +135,31 @@
                 // Print error
                 printf("Error: %s.\n", $stmt->error);
 
+                return false;
+            }
+        }
+
+        public function isInclusionNameExist() {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE inclusion_name = :inclusion_name';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->inclusion_name = htmlspecialchars(strip_tags($this->inclusion_name));
+            $stmt->bindParam(':inclusion_name', $this->inclusion_name);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    $this->error = 'Inclusion name already exist.';
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
