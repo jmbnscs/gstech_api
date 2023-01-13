@@ -218,7 +218,7 @@
         public function ticket_resolved()
         {
             // Create Query
-            $query = 'SELECT * FROM ticket_resolved_details';
+            $query = 'SELECT * FROM ticket_resolved_details ORDER BY date_resolved DESC';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
@@ -279,7 +279,7 @@
         public function ticket_invalid()
         {
             // Create Query
-            $query = 'SELECT * FROM ticket_invalid_details';
+            $query = 'SELECT * FROM ticket_invalid_details ORDER BY date_filed DESC';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
