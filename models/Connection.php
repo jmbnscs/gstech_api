@@ -8,6 +8,8 @@
         public $connection_id;
         public $connection_name;
 
+        public $error;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -130,6 +132,31 @@
                 // Print error
                 printf("Error: %s.\n", $stmt->error);
 
+                return false;
+            }
+        }
+
+        public function isConnectionNameExist() {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE connection_name = :connection_name';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->connection_name = htmlspecialchars(strip_tags($this->connection_name));
+            $stmt->bindParam(':connection_name', $this->connection_name);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    $this->error = 'Connection name already exist.';
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

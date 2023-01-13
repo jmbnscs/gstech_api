@@ -8,6 +8,8 @@
         public $area_id;
         public $area_name;
 
+        public $error;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -130,6 +132,31 @@
                 // Print error
                 printf("Error: %s.\n", $stmt->error);
 
+                return false;
+            }
+        }
+
+        public function isAreaNameExist() {
+            $query = 'SELECT * FROM ' . $this->table . ' WHERE area_name = :area_name';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->area_name = htmlspecialchars(strip_tags($this->area_name));
+            $stmt->bindParam(':area_name', $this->area_name);
+
+            try {
+                $stmt->execute();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($row) {
+                    $this->error = 'Area name already exist.';
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }
