@@ -28,7 +28,9 @@
             'payments-dlt' => $payments_dlt,
             'prorate-edit' => $prorate_edit,
             'prorate-dlt' => $prorate_dlt,
+            'plans-add' => $plans_add,
             'plans-edit' => $plans_edit,
+            'tickets-add' => $tickets_add,
             'active-claim' => $active_claim,
             'active-invalid' => $active_invalid,
             'pending-resolve' => $pending_resolve,
@@ -36,6 +38,7 @@
             'invalid-reactivate' => $invalid_reactivate,
             'invalid-delete' => $invalid_delete,
             'custdata-edit' => $custdata_edit,
+            'admins-add' => $admins_add,
             'admindata-edit' => $admindata_edit,
             'admindata-reset' => $admindata_reset,
         );
