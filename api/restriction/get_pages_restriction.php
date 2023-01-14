@@ -34,16 +34,12 @@
             'invoice-payment-add' => $invoice_payment_add,
             'plan-page' => $plan_page,
             'plan-view' => $plan_view,
-            'plan-add' => $plan_add,
             'ticket-page' => $ticket_page,
             'ticket-active' => $ticket_active,
             'ticket-pending' => $ticket_pending,
-            'ticket-resolved' => $ticket_resolved,
             'ticket-invalid' => $ticket_invalid,
-            'ticket-create' => $ticket_create,
             'admin-page' => $admin_page,
             'admin-view' => $admin_view,
-            'admin-add' => $admin_add,
             'misc-page' => $misc_page,
             'profile-page' => $profile_page
         );
