@@ -91,6 +91,65 @@
             }
         }
 
+        public function create_pages_restriction () {
+            $query = 'INSERT INTO restrict_pages 
+                SET user_id = :user_id, 
+                    customer_page = :customer_page,
+                    customer_list = :customer_list,
+                    customer_add = :customer_add,
+                    customer_import = :customer_import,
+                    invoice_page = :invoice_page,
+                    invoice_view = :invoice_view,
+                    invoice_payment = :invoice_payment,
+                    invoice_prorate = :invoice_prorate,
+                    invoice_payment_add = :invoice_payment_add,
+                    plan_page = :plan_page,
+                    plan_view = :plan_view,
+                    ticket_page = :ticket_page,
+                    ticket_active = :ticket_active,
+                    ticket_pending = :ticket_pending,
+                    ticket_invalid = :ticket_invalid,
+                    admin_page = :admin_page,
+                    admin_view = :admin_view';
+
+            $stmt = $this->conn->prepare($query);
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+            $this->setPagesRestrictions();
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            $stmt->bindParam(':customer_page', $this->customer_page);
+            $stmt->bindParam(':customer_list', $this->customer_list);
+            $stmt->bindParam(':customer_add', $this->customer_add);
+            $stmt->bindParam(':customer_import', $this->customer_import);
+
+            $stmt->bindParam(':invoice_page', $this->invoice_page);
+            $stmt->bindParam(':invoice_view', $this->invoice_view);
+            $stmt->bindParam(':invoice_payment', $this->invoice_payment);
+            $stmt->bindParam(':invoice_prorate', $this->invoice_prorate);
+            $stmt->bindParam(':invoice_payment_add', $this->invoice_payment_add);
+
+            $stmt->bindParam(':plan_page', $this->plan_page);
+            $stmt->bindParam(':plan_view', $this->plan_view);
+
+            $stmt->bindParam(':ticket_page', $this->ticket_page);
+            $stmt->bindParam(':ticket_active', $this->ticket_active);
+            $stmt->bindParam(':ticket_pending', $this->ticket_pending);
+            $stmt->bindParam(':ticket_invalid', $this->ticket_invalid);
+
+            $stmt->bindParam(':admin_page', $this->admin_page);
+            $stmt->bindParam(':admin_view', $this->admin_view);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
         public function update_pages_restriction () {
             $query = 'UPDATE restrict_pages 
                 SET customer_page = :customer_page,
@@ -115,6 +174,179 @@
             $stmt = $this->conn->prepare($query);
             $this->user_id = htmlspecialchars(strip_tags($this->user_id));
 
+            $this->setPagesRestrictions();
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            $stmt->bindParam(':customer_page', $this->customer_page);
+            $stmt->bindParam(':customer_list', $this->customer_list);
+            $stmt->bindParam(':customer_add', $this->customer_add);
+            $stmt->bindParam(':customer_import', $this->customer_import);
+
+            $stmt->bindParam(':invoice_page', $this->invoice_page);
+            $stmt->bindParam(':invoice_view', $this->invoice_view);
+            $stmt->bindParam(':invoice_payment', $this->invoice_payment);
+            $stmt->bindParam(':invoice_prorate', $this->invoice_prorate);
+            $stmt->bindParam(':invoice_payment_add', $this->invoice_payment_add);
+
+            $stmt->bindParam(':plan_page', $this->plan_page);
+            $stmt->bindParam(':plan_view', $this->plan_view);
+
+            $stmt->bindParam(':ticket_page', $this->ticket_page);
+            $stmt->bindParam(':ticket_active', $this->ticket_active);
+            $stmt->bindParam(':ticket_pending', $this->ticket_pending);
+            $stmt->bindParam(':ticket_invalid', $this->ticket_invalid);
+
+            $stmt->bindParam(':admin_page', $this->admin_page);
+            $stmt->bindParam(':admin_view', $this->admin_view);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function get_buttons_restriction () {
+            $query = 'SELECT * FROM restrict_buttons WHERE user_id = :user_id';
+
+            $stmt = $this->conn->prepare($query);
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            try {
+                $stmt->execute();
+                return $stmt;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+            }
+        }
+
+        public function create_buttons_restriction () {
+            $query = 'INSERT INTO restrict_buttons 
+                SET user_id = :user_id, 
+                    invoice_edit = :invoice_edit,
+                    payments_edit = :payments_edit,
+                    payments_dlt = :payments_dlt,
+                    prorate_edit = :prorate_edit,
+                    prorate_dlt = :prorate_dlt,
+                    plans_add = :plans_add,
+                    plans_edit = :plans_edit,
+                    active_claim = :active_claim,
+                    active_invalid = :active_invalid,
+                    pending_resolve = :pending_resolve,
+                    pending_invalid = :pending_invalid,
+                    invalid_reactivate = :invalid_reactivate,
+                    invalid_delete = :invalid_delete,
+                    custdata_edit = :custdata_edit,
+                    admindata_edit = :admindata_edit,
+                    admindata_reset = :admindata_reset,
+                    admins_add = :admins_add,
+                    tickets_add = :tickets_add';
+
+            $stmt = $this->conn->prepare($query);
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+            $this->setButtonsRestrictions();
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            $stmt->bindParam(':invoice_edit', $this->invoice_edit);
+            $stmt->bindParam(':payments_edit', $this->payments_edit);
+            $stmt->bindParam(':payments_dlt', $this->payments_dlt);
+            $stmt->bindParam(':prorate_edit', $this->prorate_edit);
+            $stmt->bindParam(':prorate_dlt', $this->prorate_dlt);
+
+            $stmt->bindParam(':plans_add', $this->plans_add);
+            $stmt->bindParam(':plans_edit', $this->plans_edit);
+
+            $stmt->bindParam(':active_claim', $this->active_claim);
+            $stmt->bindParam(':active_invalid', $this->active_invalid);
+            $stmt->bindParam(':pending_resolve', $this->pending_resolve);
+            $stmt->bindParam(':pending_invalid', $this->pending_invalid);
+            $stmt->bindParam(':invalid_reactivate', $this->invalid_reactivate);
+            $stmt->bindParam(':invalid_delete', $this->invalid_delete);
+
+            $stmt->bindParam(':custdata_edit', $this->custdata_edit);
+            $stmt->bindParam(':admindata_edit', $this->admindata_edit);
+            $stmt->bindParam(':admindata_reset', $this->admindata_reset);
+
+            $stmt->bindParam(':admins_add', $this->admins_add);
+            $stmt->bindParam(':tickets_add', $this->tickets_add);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function update_buttons_restriction () {
+            $query = 'UPDATE restrict_buttons 
+                SET invoice_edit = :invoice_edit,
+                    payments_edit = :payments_edit,
+                    payments_dlt = :payments_dlt,
+                    prorate_edit = :prorate_edit,
+                    prorate_dlt = :prorate_dlt,
+                    plans_add = :plans_add,
+                    plans_edit = :plans_edit,
+                    active_claim = :active_claim,
+                    active_invalid = :active_invalid,
+                    pending_resolve = :pending_resolve,
+                    pending_invalid = :pending_invalid,
+                    invalid_reactivate = :invalid_reactivate,
+                    invalid_delete = :invalid_delete,
+                    custdata_edit = :custdata_edit,
+                    admindata_edit = :admindata_edit,
+                    admindata_reset = :admindata_reset,
+                    admins_add = :admins_add,
+                    tickets_add = :tickets_add
+             WHERE user_id = :user_id';
+
+            $stmt = $this->conn->prepare($query);
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+            $this->setButtonsRestrictions();
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            $stmt->bindParam(':invoice_edit', $this->invoice_edit);
+            $stmt->bindParam(':payments_edit', $this->payments_edit);
+            $stmt->bindParam(':payments_dlt', $this->payments_dlt);
+            $stmt->bindParam(':prorate_edit', $this->prorate_edit);
+            $stmt->bindParam(':prorate_dlt', $this->prorate_dlt);
+
+            $stmt->bindParam(':plans_add', $this->plans_add);
+            $stmt->bindParam(':plans_edit', $this->plans_edit);
+
+            $stmt->bindParam(':active_claim', $this->active_claim);
+            $stmt->bindParam(':active_invalid', $this->active_invalid);
+            $stmt->bindParam(':pending_resolve', $this->pending_resolve);
+            $stmt->bindParam(':pending_invalid', $this->pending_invalid);
+            $stmt->bindParam(':invalid_reactivate', $this->invalid_reactivate);
+            $stmt->bindParam(':invalid_delete', $this->invalid_delete);
+
+            $stmt->bindParam(':custdata_edit', $this->custdata_edit);
+            $stmt->bindParam(':admindata_edit', $this->admindata_edit);
+            $stmt->bindParam(':admindata_reset', $this->admindata_reset);
+
+            $stmt->bindParam(':admins_add', $this->admins_add);
+            $stmt->bindParam(':tickets_add', $this->tickets_add);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        private function setPagesRestrictions() {
             // Customer Page Restrictions
             $this->customer_list = htmlspecialchars(strip_tags($this->customer_list));
             if ($this->customer_list == 1) {
@@ -152,7 +384,7 @@
             else {
                 $this->plan_page = 0;
             }
-            
+
             // Tickets Page Restrictions
             $this->ticket_page = htmlspecialchars(strip_tags($this->ticket_page));
             if ($this->ticket_page == 1) {
@@ -165,67 +397,13 @@
                 $this->ticket_pending = 0;
                 $this->ticket_invalid = 0;
             }
-            
+
             // Admins Page Restrictions
             $this->admin_view = htmlspecialchars(strip_tags($this->admin_view));
-
-            $stmt->bindParam(':user_id', $this->user_id);
-
-            $stmt->bindParam(':customer_page', $this->customer_page);
-            $stmt->bindParam(':customer_list', $this->customer_list);
-            $stmt->bindParam(':customer_add', $this->customer_add);
-            $stmt->bindParam(':customer_import', $this->customer_import);
-
-            $stmt->bindParam(':invoice_page', $this->invoice_page);
-            $stmt->bindParam(':invoice_view', $this->invoice_view);
-            $stmt->bindParam(':invoice_payment', $this->invoice_payment);
-            $stmt->bindParam(':invoice_prorate', $this->invoice_prorate);
-            $stmt->bindParam(':invoice_payment_add', $this->invoice_payment_add);
-
-            $stmt->bindParam(':plan_page', $this->plan_page);
-            $stmt->bindParam(':plan_view', $this->plan_view);
-
-            $stmt->bindParam(':ticket_page', $this->ticket_page);
-            $stmt->bindParam(':ticket_active', $this->ticket_active);
-            $stmt->bindParam(':ticket_pending', $this->ticket_pending);
-            $stmt->bindParam(':ticket_invalid', $this->ticket_invalid);
-
-            $stmt->bindParam(':admin_page', $this->admin_page);
-            $stmt->bindParam(':admin_view', $this->admin_view);
-
-            try {
-                $stmt->execute();
-                return $stmt;
-            } catch (Exception $e) {
-                $this->error = $e->getMessage();
-            }
+            ($this->admin_view == 1) ? $this->admin_page = 1 : $this->admin_page = 0;
         }
 
-        public function update_buttons_restriction () {
-            $query = 'UPDATE restrict_buttons 
-                SET invoice_edit = :invoice_edit,
-                    payments_edit = :payments_edit,
-                    payments_dlt = :payments_dlt,
-                    prorate_edit = :prorate_edit,
-                    prorate_dlt = :prorate_dlt,
-                    plans_add = :plans_add,
-                    plans_edit = :plans_edit,
-                    active_claim = :active_claim,
-                    active_invalid = :active_invalid,
-                    pending_resolve = :pending_resolve,
-                    pending_invalid = :pending_invalid,
-                    invalid_reactivate = :invalid_reactivate,
-                    invalid_delete = :invalid_delete,
-                    custdata_edit = :custdata_edit,
-                    admindata_edit = :admindata_edit,
-                    admindata_reset = :admindata_reset,
-                    admins_add = :admins_add,
-                    tickets_add = :tickets_add
-             WHERE user_id = :user_id';
-
-            $stmt = $this->conn->prepare($query);
-            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
-
+        private function setButtonsRestrictions() {
             // Invoice Page Restrictions
             $this->payments_edit = htmlspecialchars(strip_tags($this->payments_edit));
             ($this->payments_edit == 1) ? $this->invoice_edit = 1 : $this->invoice_edit = 0;
@@ -236,7 +414,7 @@
             // Plans Page Restrictions
             $this->plans_add = htmlspecialchars(strip_tags($this->plans_add));
             $this->plans_edit = htmlspecialchars(strip_tags($this->plans_edit));
-            
+
             // Tickets Page Restrictions
             $this->tickets_add = htmlspecialchars(strip_tags($this->tickets_add));
             $this->active_claim = htmlspecialchars(strip_tags($this->active_claim));
@@ -248,7 +426,7 @@
                 $this->pending_resolve = 0;
                 $this->pending_invalid = 0;
             }
-            
+
             $this->active_invalid = htmlspecialchars(strip_tags($this->active_invalid));
             if ($this->active_invalid == 1) {
                 $this->invalid_reactivate = 1;
@@ -258,60 +436,12 @@
                 $this->invalid_reactivate = 0;
                 $this->invalid_delete = 0;
             }
-            
+
             // Customer/Admin Details Page Restrictions
             $this->admins_add = htmlspecialchars(strip_tags($this->admins_add));
             $this->admindata_edit = htmlspecialchars(strip_tags($this->admindata_edit));
             ($this->admindata_edit == 1) ? $this->admindata_reset = 1 : $this->admindata_reset = 0;
 
             $this->custdata_edit = htmlspecialchars(strip_tags($this->custdata_edit));
-
-
-            $stmt->bindParam(':user_id', $this->user_id);
-
-            $stmt->bindParam(':invoice_edit', $this->invoice_edit);
-            $stmt->bindParam(':payments_edit', $this->payments_edit);
-            $stmt->bindParam(':payments_dlt', $this->payments_dlt);
-            $stmt->bindParam(':prorate_edit', $this->prorate_edit);
-            $stmt->bindParam(':prorate_dlt', $this->prorate_dlt);
-
-            $stmt->bindParam(':plans_add', $this->plans_add);
-            $stmt->bindParam(':plans_edit', $this->plans_edit);
-
-            $stmt->bindParam(':active_claim', $this->active_claim);
-            $stmt->bindParam(':active_invalid', $this->active_invalid);
-            $stmt->bindParam(':pending_resolve', $this->pending_resolve);
-            $stmt->bindParam(':pending_invalid', $this->pending_invalid);
-            $stmt->bindParam(':invalid_reactivate', $this->invalid_reactivate);
-            $stmt->bindParam(':invalid_delete', $this->invalid_delete);
-
-            $stmt->bindParam(':custdata_edit', $this->custdata_edit);
-            $stmt->bindParam(':admindata_edit', $this->admindata_edit);
-            $stmt->bindParam(':admindata_reset', $this->admindata_reset);
-
-            $stmt->bindParam(':admins_add', $this->admins_add);
-            $stmt->bindParam(':tickets_add', $this->tickets_add);
-
-            try {
-                $stmt->execute();
-                return $stmt;
-            } catch (Exception $e) {
-                $this->error = $e->getMessage();
-            }
-        }
-
-        public function get_buttons_restriction () {
-            $query = 'SELECT * FROM restrict_buttons WHERE user_id = :user_id';
-
-            $stmt = $this->conn->prepare($query);
-            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
-            $stmt->bindParam(':user_id', $this->user_id);
-
-            try {
-                $stmt->execute();
-                return $stmt;
-            } catch (Exception $e) {
-                $this->error = $e->getMessage();
-            }
         }
     }

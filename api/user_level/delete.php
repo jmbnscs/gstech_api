@@ -8,27 +8,26 @@ header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,
 include_once '../../config/Database.php';
 include_once '../../models/UserLevel.php';
 
-// Instantiate DB & connect
 $database = new Database();
 $db = $database->connect();
 
-// Instantiate blog post object
 $user_level = new UserLevel($db);
 
-// Get raw data
 $data = json_decode(file_get_contents("php://input"));
 
-// Set ID to Delete
 $user_level->user_id = $data->user_id;
 
-// Delete UserLevel
 if($user_level->delete()) {
     echo json_encode(
-    array('message' => 'User Level Deleted')
+    array('success' => true)
 );
-} else {
+} 
+else {
     echo json_encode(
-    array('message' => 'User Level Not Deleted')
+    array(
+        'success' => false,
+        'error' => $user_level->error
+    )
 );
 }
 
