@@ -5,6 +5,7 @@
         private $table = 'payment';
 
         public $payment_id;
+        public $payment_center;
         public $amount_paid;
         public $payment_reference_id;
         public $account_id;
@@ -124,6 +125,17 @@
             return $stmt;
         }
 
+        public function getPaymentCenters()
+        {
+            $query = 'SELECT * FROM payment_centers';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         public function read_by_invoice () 
         {
             $query = 'SELECT
@@ -155,7 +167,8 @@
             // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET amount_paid = :amount_paid, 
-                        payment_reference_id = :payment_reference_id
+                        payment_reference_id = :payment_reference_id,
+                        payment_center = :payment_center
                     WHERE payment_id = :payment_id';
     
             // Prepare statement
@@ -164,11 +177,13 @@
             // Clean data
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
+            $this->payment_center = htmlspecialchars(strip_tags($this->payment_center));
             $this->payment_id = htmlspecialchars(strip_tags($this->payment_id));
     
             // Bind data
             $stmt->bindParam(':amount_paid', $this->amount_paid);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
+            $stmt->bindParam(':payment_center', $this->payment_center);
             $stmt->bindParam(':payment_id', $this->payment_id);
     
             // Execute query
@@ -185,34 +200,27 @@
 
         public function update_tagged() 
         {
-            // Create query
             $query = 'UPDATE ' . $this->table . '
                     SET account_id = :account_id, 
                         invoice_id = :invoice_id,
                         tagged = 1
                     WHERE payment_id = :payment_id';
     
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
             
-            // Clean data
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
             $this->payment_id = htmlspecialchars(strip_tags($this->payment_id));
     
-            // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':invoice_id', $this->invoice_id);
             $stmt->bindParam(':payment_id', $this->payment_id);
     
-            // Execute query
-            if($stmt->execute()) {
+            try {
+                $stmt->execute();
                 return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-    
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

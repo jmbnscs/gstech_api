@@ -275,7 +275,6 @@
         # Update Invoice
         public function update() 
         {
-           // Clean data
            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
            $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
            $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
@@ -283,27 +282,22 @@
 
            $query = 'CALL invoice_set_payment (:account_id, :amount_paid, :payment_reference_id, :payment_date)';
 
-           // Prepare statement
            $stmt = $this->conn->prepare($query);
 
-           // Bind data
            $stmt->bindParam(':account_id', $this->account_id);
            $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
            $stmt->bindParam(':amount_paid', $this->amount_paid);
            $stmt->bindParam(':payment_date', $this->payment_date);
 
-           // Execute query
-           if($stmt->execute()) {
-               $this->updateInstallationBalance();
-               $this->getLatestInvoice();
-               return true;
-           }
-           else {
-               // Print error
-               printf("Error: %s.\n", $stmt->error);
-   
-               return false;
-           }
+           try {
+                $stmt->execute();
+                $this->updateInstallationBalance();
+                $this->getLatestInvoice();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
         }
 
         # for overdue / for disconnection, can be changed to automatic function

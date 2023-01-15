@@ -10,6 +10,7 @@
         public $avg_rating;
         public $ratings_status_id;
         public $account_id;
+        public $invoice_status;
 
         public $error;
         
@@ -93,28 +94,21 @@
         # Update Ratings
         public function update()
         {
-            // Create query
             $query = 'CALL ratings_update_status (:account_id, :invoice_status)';
 
-            // Prepare statement
             $stmt = $this->conn->prepare($query);
 
-            // Clean data
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->invoice_status = htmlspecialchars(strip_tags($this->invoice_status));
 
-            // Bind data
             $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':invoice_status', $this->invoice_status);
 
-            // Execute query
-            if($stmt->execute()) {
+            try {
+                $stmt->execute();
                 return true;
-            }
-            else {
-                // Print error
-                printf("Error: %s.\n", $stmt->error);
-
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
                 return false;
             }
         }

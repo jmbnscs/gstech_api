@@ -20,6 +20,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 // ID to Update
 $payment->payment_id = $data->payment_id;
+$payment->payment_center = $data->payment_center;
 
 $payment->amount_paid = $data->amount_paid;
 $payment->payment_reference_id = $data->payment_reference_id;

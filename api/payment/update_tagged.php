@@ -27,10 +27,13 @@
     // Update payment
     if($payment->update_tagged()) {
         echo json_encode(
-            array('message' => 'Payment Tagged')
+            array('success' => true)
     );
     } else {
         echo json_encode(
-            array('message' => 'Payment not Tagged')
+            array(
+                'success' => false,
+                'error' => $payment->error
+            )
         );
     }
