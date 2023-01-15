@@ -8,28 +8,30 @@
     include_once '../../config/Database.php';
     include_once '../../models/UserLevel.php';
 
-    // Instantiate DB & Connect
     $database = new Database();
     $db = $database->connect();
 
-    // Instantiate blog post object
     $user_level = new UserLevel ($db);
 
-    // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
     $user_level->user_role = $data->user_role;
 
-    // Create post
     if ($user_level->create())
     {
         echo json_encode(
-            array ('message' => 'User Level Created')
+            array (
+                'success' => true,
+                'user_id' => $user_level->user_id
+            )
         );
     }
     else
     {
         echo json_encode(
-            array ('message' => 'User Level Not Created')
+            array (
+                'success' => false,
+                'error' => $user_level->error
+            )
         );
     }
