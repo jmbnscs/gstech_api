@@ -23,6 +23,7 @@
             extract($row);
 
             $data = array(
+                'payment_center' => $payment_center,
                 'payment_id' => $payment_id,
                 'amount_paid' => $amount_paid,
                 'payment_reference_id' => $payment_reference_id,

@@ -26,7 +26,11 @@
         {
             extract($row);
 
+            $payment->center_id = $payment_center;
+            $payment->getPaymentCenter();
+
             $data = array(
+                'payment_center' => $payment->payment_center,
                 'payment_id' => $payment_id,
                 'amount_paid' => $amount_paid,
                 'payment_reference_id' => $payment_reference_id,
