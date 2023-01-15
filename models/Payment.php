@@ -12,6 +12,7 @@
         public $invoice_id;
         public $payment_date;
         public $tagged;
+        public $adv_payment;
 
         public $error;
 
@@ -39,6 +40,39 @@
             $stmt->bindParam(':amount_paid', $this->amount_paid);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
             $stmt->bindParam(':payment_date', $this->payment_date);
+
+            try {
+                $stmt->execute();
+                $this->payment_id = $this->conn->lastInsertId();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function create_advanced_payment ()
+        {
+            $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
+            $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
+            $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    account_id = :account_id,
+                    amount_paid = :amount_paid,
+                    payment_reference_id = :payment_reference_id,
+                    adv_payment = 1,
+                    payment_date = :payment_date';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':amount_paid', $this->amount_paid);
+            $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
+            $stmt->bindParam(':payment_date', $this->payment_date);
+            $stmt->bindParam(':account_id', $this->account_id);
 
             try {
                 $stmt->execute();
@@ -158,6 +192,45 @@
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             
+            return $stmt;
+        }
+
+        public function read_advanced_payments()
+        {
+            // Create Query
+            $query = 'SELECT * FROM payment WHERE adv_payment = 1';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function read_pending_approval()
+        {
+            // Create Query
+            $query = 'SELECT * FROM payment_approval WHERE status = 1';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function read_invalid_approval()
+        {
+            // Create Query
+            $query = 'SELECT * FROM payment_approval WHERE status = 3';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
             return $stmt;
         }
 
