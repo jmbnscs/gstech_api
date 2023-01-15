@@ -131,7 +131,7 @@
         public function invoice_unpaid()
         {
             // Create Query
-            $query = 'SELECT * FROM view_invoice_unpaid';
+            $query = 'SELECT * FROM view_invoice_unpaid ORDER BY disconnection_date DESC';
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);

@@ -21,15 +21,16 @@
     $rate->invoice_status = $data->invoice_status;
 
     // Update Rating
-    if ($rate->update())
-    {
+    if ($rate->update()) {
         echo json_encode(
-            array ('message' => 'Rating Updated')
-        );
-    }
-    else
-    {
+            array('success' => true)
+    );
+    } 
+    else {
         echo json_encode(
-            array ('message' => 'Rating Not Updated')
+            array(
+                'success' => false,
+                'error' => $rate->error
+            )
         );
     }
