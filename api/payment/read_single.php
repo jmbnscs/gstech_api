@@ -28,7 +28,13 @@
         // Payment Array
         $row = $result->fetch(PDO::FETCH_ASSOC);
         extract($row);
+
+        $payment->center_id = $payment_center;
+        $payment->getPaymentCenter();
+
         $arr = array(
+            'payment_center' => $payment_center,
+            'payment_center_name' => $payment->payment_center,
             'payment_id' => $payment_id,
             'amount_paid' => $amount_paid,
             'payment_reference_id' => $payment_reference_id,

@@ -21,6 +21,7 @@
     // ID to Update
     $payment->payment_id = $data->payment_id;
 
+    $payment->payment_center = $data->payment_center;
     $payment->account_id = $data->account_id;
     $payment->invoice_id = $data->invoice_id;
 

@@ -5,7 +5,6 @@
         private $table = 'payment';
 
         public $payment_id;
-        public $payment_center;
         public $amount_paid;
         public $payment_reference_id;
         public $account_id;
@@ -13,6 +12,9 @@
         public $payment_date;
         public $tagged;
         public $adv_payment;
+
+        public $center_id;
+        public $payment_center;
 
         public $error;
 
@@ -27,16 +29,19 @@
             $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
             $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
+            $this->payment_center = htmlspecialchars(strip_tags($this->payment_center));
 
             $query = 'INSERT INTO ' . 
                     $this->table . '
                 SET
+                    payment_center = :payment_center,
                     amount_paid = :amount_paid,
                     payment_reference_id = :payment_reference_id,
                     payment_date = :payment_date';
 
             $stmt = $this->conn->prepare($query);
 
+            $stmt->bindParam(':payment_center', $this->payment_center);
             $stmt->bindParam(':amount_paid', $this->amount_paid);
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
             $stmt->bindParam(':payment_date', $this->payment_date);
@@ -113,10 +118,23 @@
 
             $stmt->bindParam(':payment_id', $this->payment_id);
 
-            // Execute Query
             $stmt->execute();
 
             return $stmt;
+        }
+
+        public function getPaymentCenter() {
+            $query = 'SELECT payment_center FROM payment_centers WHERE center_id = :center_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':center_id', $this->center_id);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->payment_center = $row['payment_center'];
         }
 
         public function read_single_account () 
@@ -187,7 +205,7 @@
         }
 
         public function read_untagged () {
-            $query = 'SELECT * FROM ' . $this->table . ' WHERE tagged = 0';
+            $query = 'SELECT payment_id, amount_paid, payment_reference_id, payment_date, tagged, (SELECT payment_center FROM payment_centers WHERE center_id = p.payment_center) AS payment_center FROM ' . $this->table . ' AS p WHERE tagged = 0';
 
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
@@ -276,6 +294,7 @@
             $query = 'UPDATE ' . $this->table . '
                     SET account_id = :account_id, 
                         invoice_id = :invoice_id,
+                        payment_center = :payment_center,
                         tagged = 1
                     WHERE payment_id = :payment_id';
     
@@ -284,10 +303,12 @@
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
             $this->invoice_id = htmlspecialchars(strip_tags($this->invoice_id));
             $this->payment_id = htmlspecialchars(strip_tags($this->payment_id));
+            $this->payment_center = htmlspecialchars(strip_tags($this->payment_center));
     
             $stmt->bindParam(':account_id', $this->account_id);
             $stmt->bindParam(':invoice_id', $this->invoice_id);
             $stmt->bindParam(':payment_id', $this->payment_id);
+            $stmt->bindParam(':payment_center', $this->payment_center);
     
             try {
                 $stmt->execute();

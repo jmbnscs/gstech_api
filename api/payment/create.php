@@ -18,6 +18,7 @@
     // Get raw posted data
     $data = json_decode(file_get_contents("php://input"));
 
+    $payment->payment_center = $data->payment_center;
     $payment->amount_paid = $data->amount_paid;
     $payment->payment_reference_id = $data->payment_reference_id;
     $payment->payment_date = $data->payment_date;
