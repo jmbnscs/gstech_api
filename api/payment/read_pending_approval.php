@@ -23,12 +23,14 @@
         {
             extract($row);
 
+            $payment->status_id = $status;
+            $payment->getApprovalStatus();
+
             $data = array(
                 'approval_id' => $approval_id,
                 'account_id' => $account_id,
                 'date_uploaded' => $date_uploaded,
-                'status' => $status,
-                'uploaded_image' => $uploaded_image
+                'status' => $payment->status_name,
             );
 
             array_push($arr, $data);
