@@ -16,6 +16,12 @@
         public $center_id;
         public $payment_center;
 
+        public $approval_id;
+        public $uploaded_image;
+
+        public $status_id;
+        public $status_name;
+
         public $error;
 
         public function __construct($db)
@@ -62,6 +68,7 @@
             $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
             $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
             $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->payment_center = htmlspecialchars(strip_tags($this->payment_center));
 
             $query = 'INSERT INTO ' . 
                     $this->table . '
@@ -69,6 +76,7 @@
                     account_id = :account_id,
                     amount_paid = :amount_paid,
                     payment_reference_id = :payment_reference_id,
+                    payment_center = :payment_center,
                     adv_payment = 1,
                     payment_date = :payment_date';
 
@@ -78,6 +86,42 @@
             $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
             $stmt->bindParam(':payment_date', $this->payment_date);
             $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':payment_center', $this->payment_center);
+
+            try {
+                $stmt->execute();
+                $this->payment_id = $this->conn->lastInsertId();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function create_pending_payment ()
+        {
+            $this->amount_paid = htmlspecialchars(strip_tags($this->amount_paid));
+            $this->payment_reference_id = htmlspecialchars(strip_tags($this->payment_reference_id));
+            $this->payment_date = htmlspecialchars(strip_tags($this->payment_date));
+            $this->account_id = htmlspecialchars(strip_tags($this->account_id));
+            $this->payment_center = htmlspecialchars(strip_tags($this->payment_center));
+
+            $query = 'INSERT INTO ' . 
+                    $this->table . '
+                SET
+                    account_id = :account_id,
+                    amount_paid = :amount_paid,
+                    payment_reference_id = :payment_reference_id,
+                    payment_center = :payment_center,
+                    payment_date = :payment_date';
+
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':amount_paid', $this->amount_paid);
+            $stmt->bindParam(':payment_reference_id', $this->payment_reference_id);
+            $stmt->bindParam(':payment_date', $this->payment_date);
+            $stmt->bindParam(':account_id', $this->account_id);
+            $stmt->bindParam(':payment_center', $this->payment_center);
 
             try {
                 $stmt->execute();
@@ -228,15 +272,87 @@
 
         public function read_pending_approval()
         {
-            // Create Query
             $query = 'SELECT * FROM payment_approval WHERE status = 1';
             
-            // Prepare Statement
             $stmt = $this->conn->prepare($query);
 
             $stmt->execute();
 
             return $stmt;
+        }
+
+        public function update_pending_status()
+        {
+            $query = 'UPDATE payment_approval SET status = :status_id, payment_id = :payment_id WHERE approval_id = :approval_id';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $this->approval_id = htmlspecialchars(strip_tags($this->approval_id));
+            $stmt->bindParam(':approval_id', $this->approval_id);
+            $stmt->bindParam(':payment_id', $this->payment_id);
+            $stmt->bindParam(':status_id', $this->status_id);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function read_single_pending () 
+        {
+            $query = 'SELECT * FROM payment_approval WHERE status = 1 AND approval_id = :approval_id';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':approval_id', $this->approval_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function read_single_invalid () 
+        {
+            $query = 'SELECT * FROM payment_approval WHERE status = 3 AND approval_id = :approval_id';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':approval_id', $this->approval_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function get_uploaded_image() {
+            $query = 'SELECT uploaded_image FROM payment_approval WHERE approval_id = :approval_id';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':approval_id', $this->approval_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function getApprovalStatus()
+        {
+            $query = 'SELECT status_name FROM approval_status WHERE status_id = :status_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':status_id', $this->status_id);
+
+            $stmt->execute();
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $this->status_name = $row['status_name'];
         }
 
         public function read_invalid_approval()
@@ -246,6 +362,7 @@
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
+
 
             $stmt->execute();
 
