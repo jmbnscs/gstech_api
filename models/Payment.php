@@ -369,6 +369,21 @@
             return $stmt;
         }
 
+        public function read_single_payment_approval()
+        {
+            // Create Query
+            $query = 'SELECT * FROM payment_approval WHERE account_id = :account_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->bindParam(':account_id', $this->account_id);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Update Plan
         public function update() 
         {
