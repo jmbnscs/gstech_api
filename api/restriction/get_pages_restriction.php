@@ -41,7 +41,8 @@
             'admin-page' => $admin_page,
             'admin-view' => $admin_view,
             'misc-page' => $misc_page,
-            'profile-page' => $profile_page
+            'profile-page' => $profile_page,
+            'reports-page' => $reports_page,
         );
 
         echo json_encode($data);
