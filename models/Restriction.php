@@ -444,4 +444,42 @@
 
             $this->custdata_edit = htmlspecialchars(strip_tags($this->custdata_edit));
         }
+
+        public function delete_buttons_restriction() 
+        {
+            $query = 'DELETE FROM restrict_buttons WHERE user_id = :user_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
+
+        public function delete_pages_restriction() 
+        {
+            $query = 'DELETE FROM restrict_pages WHERE user_id = :user_id';
+
+            $stmt = $this->conn->prepare($query);
+
+            $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+
+            $stmt->bindParam(':user_id', $this->user_id);
+
+            try {
+                $stmt->execute();
+                return true;
+            } catch (Exception $e) {
+                $this->error = $e->getMessage();
+                return false;
+            }
+        }
     }
