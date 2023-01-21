@@ -91,34 +91,38 @@ if ($num > 0)
                         echo json_encode(
                             array (
                                 'success' => false,
-                                'error' => $invoice->error
+                                'error' => $invoice->error,
+                                'api' => 'create import invoice'
                             )
                         );
                     }
                 }
                 else {
+                    $rate->delete();
+                    $install->delete();
                     $customer->delete();
                     $account->delete();
-                    $install->delete();
-                    $rate->delete();
                     
                     echo json_encode(
                         array (
                             'success' => false,
-                            'error' => $rate->error
+                            'error' => $rate->error,
+                            'api' => 'rate create'
                         )
                     );
                 }
                 
             }
             else {
+                $install->delete();
                 $customer->delete();
                 $account->delete();
-                $install->delete();
+                
                 echo json_encode(
                     array (
                         'success' => false,
-                        'error' => $install->error
+                        'error' => $install->error,
+                        'api' => 'install create'
                     )
                 );
             }
@@ -130,7 +134,9 @@ if ($num > 0)
             echo json_encode(
                 array (
                     'success' => false,
-                    'error' => $customer->error
+                    'error' => $customer->error,
+                    'api' => 'customer create',
+                    'account_id' => $customer->account_id
                 )
             );
         }
@@ -140,7 +146,8 @@ if ($num > 0)
         echo json_encode(
             array (
                 'success' => false,
-                'error' => $account->error
+                'error' => $account->error,
+                'api' => 'account import'
             )
         );
     }
