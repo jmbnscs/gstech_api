@@ -142,6 +142,31 @@
 
             return $stmt;
         }
+        
+        public function invoice_unpaid_per_account()
+        {
+            // Create Query
+            $query = 'SELECT MAX(i.invoice_id) AS invoice_id, 
+                    c.first_name AS first_name, 
+                    c.last_name AS last_name, 
+                    SUM(i.running_balance) AS running_balance, 
+                    MAX(i.disconnection_date) AS disconnection_date, 
+                    s.status_name AS status
+                FROM gstech_bms_db.invoice i
+                JOIN gstech_bms_db.customer c 
+                    ON c.account_id = i.account_id
+                JOIN gstech_bms_db.invoice_status s 
+                    ON s.status_id = i.invoice_status_id
+                WHERE i.invoice_status_id <> 1
+                GROUP BY c.account_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
 
         public function invoice_all_unpaid() {
             $query = 'SELECT SUM(running_balance) AS total_unpaid, COUNT(*) AS total_invoices FROM invoice WHERE invoice_status_id != 1';
