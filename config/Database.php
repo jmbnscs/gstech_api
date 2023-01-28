@@ -2,10 +2,10 @@
     class Database 
     {
         // DB Params
-        private $host = 'localhost:3307';
-        private $db_name = 'gstech_bms_db';
-        private $username = 'root';
-        private $password = '';
+        private $host = 'localhost';
+        private $db_name = 'u575223139_beta_bms';
+        private $username = 'u575223139_betabms';
+        private $password = ']haP+2#j4L2Y';
         private $conn;
 
         // DB Connect

@@ -2,10 +2,10 @@
     class LogsDatabase
     {
         // DB Params
-        private $host = 'localhost:3307';
-        private $db_name = 'gstech_logs';
-        private $username = 'root';
-        private $password = '';
+        private $host = 'localhost';
+        private $db_name = 'u575223139_beta_logs';
+        private $username = 'u575223139_betalogs';
+        private $password = '1kch0Y|I>';
         private $conn;
 
         // DB Connect
