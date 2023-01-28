@@ -20,6 +20,8 @@
         public $area_name;
         public $install_status;
 
+        public $admin_id;
+
         # Constructor with DB
         public function __construct($db)
         {
@@ -140,6 +142,61 @@
 
             return $stmt;
         }
+        
+        public function invoice_unpaid_per_account()
+        {
+            // Create Query
+            $query = 'SELECT MAX(i.invoice_id) AS invoice_id, 
+                    c.first_name AS first_name, 
+                    c.last_name AS last_name, 
+                    SUM(i.running_balance) AS running_balance, 
+                    MAX(i.disconnection_date) AS disconnection_date, 
+                    s.status_name AS status
+                FROM gstech_bms_db.invoice i
+                JOIN gstech_bms_db.customer c 
+                    ON c.account_id = i.account_id
+                JOIN gstech_bms_db.invoice_status s 
+                    ON s.status_id = i.invoice_status_id
+                WHERE i.invoice_status_id <> 1
+                GROUP BY c.account_id';
+            
+            // Prepare Statement
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function invoice_all_unpaid() {
+            $query = 'SELECT SUM(running_balance) AS total_unpaid, COUNT(*) AS total_invoices FROM invoice WHERE invoice_status_id != 1';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function invoice_month_unpaid() {
+            $query = 'SELECT SUM(running_balance) AS total_unpaid, COUNT(*) AS total_invoices FROM invoice WHERE invoice_status_id != 1 AND MONTH(disconnection_date) = MONTH(NOW())';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function invoice_year_unpaid() {
+            $query = 'SELECT SUM(running_balance) AS total_unpaid, COUNT(*) AS total_invoices FROM invoice WHERE invoice_status_id != 1 AND YEAR(disconnection_date) = YEAR(NOW())';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
 
         # Payment Details
         public function payment()
@@ -184,6 +241,37 @@
             return $stmt;
         }
 
+        public function prorate_all_untagged()
+        {
+            $query = 'SELECT SUM(prorate_charge) AS total_prorate, COUNT(*) AS num_of_prorates FROM prorate WHERE prorate_status_id = 1;';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function prorate_month_unpaid() {
+            $query = 'SELECT SUM(prorate_charge) AS total_prorate, COUNT(*) AS num_of_prorates FROM prorate WHERE prorate_status_id = 1 AND MONTH(created_at) = MONTH(NOW())';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function prorate_year_unpaid() {
+            $query = 'SELECT SUM(prorate_charge) AS total_prorate, COUNT(*) AS num_of_prorates FROM prorate WHERE prorate_status_id = 1 AND YEAR(created_at) = YEAR(NOW())';
+            
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
         # Rating Details
         public function rating_single()
         {
@@ -208,6 +296,18 @@
             
             // Prepare Statement
             $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            return $stmt;
+        }
+
+        public function ticket_active_claimed() {
+            $query = 'SELECT (SELECT COUNT(*) FROM ticket WHERE ticket_status_id = 1) AS active_tickets, COUNT(*) AS claimed_tickets FROM ticket WHERE ticket_status_id = 2 AND admin_id = :admin_id';
+            
+            $stmt = $this->conn->prepare($query);
+            $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
+            $stmt->bindParam(':admin_id', $this->admin_id);
 
             $stmt->execute();
 
