@@ -152,10 +152,10 @@
                     SUM(i.running_balance) AS running_balance, 
                     MAX(i.disconnection_date) AS disconnection_date, 
                     s.status_name AS status
-                FROM gstech_bms_db.invoice i
-                JOIN gstech_bms_db.customer c 
+                FROM invoice i
+                JOIN customer c 
                     ON c.account_id = i.account_id
-                JOIN gstech_bms_db.invoice_status s 
+                JOIN invoice_status s 
                     ON s.status_id = i.invoice_status_id
                 WHERE i.invoice_status_id <> 1
                 GROUP BY c.account_id';
