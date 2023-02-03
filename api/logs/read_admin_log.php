@@ -37,6 +37,7 @@
                 'activity' => $activity,
                 'ip_address' => $ip_address,
                 'user_agent' => $user_agent,
+                'page_accessed' => $page_accessed,
                 'date_accessed' => $date_accessed
             );
 
