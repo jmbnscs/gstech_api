@@ -25,7 +25,8 @@
             $data = array(
                 'plan_id' => $plan_id,
                 'plan_name' => $plan_name,
-                'bandwidth' => $bandwidth
+                'bandwidth' => $bandwidth,
+                'price' => $price
             );
 
             array_push($arr, $data);
