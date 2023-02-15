@@ -10,15 +10,15 @@
         // Restrict Pages
         public $dashboard_page;
         public $customer_page;
-        public $customer_list;
-        public $customer_add;
-        public $customer_import;
+        public $customers_list;
+        public $customers_add;
+        public $customers_import;
         public $invoice_page;
         public $invoice_view;
         public $invoice_payment;
         public $invoice_prorate;
         public $invoice_payment_add;
-        public $plan_page;
+        public $plans_page;
         public $plan_view;
         public $plan_add;
         public $ticket_page;
@@ -27,7 +27,7 @@
         public $ticket_resolved;
         public $ticket_invalid;
         public $ticket_create;
-        public $admin_page;
+        public $admins_page;
         public $admin_view;
         public $admin_add;
         public $misc_page;
@@ -95,21 +95,21 @@
             $query = 'INSERT INTO restrict_pages 
                 SET user_id = :user_id, 
                     customer_page = :customer_page,
-                    customer_list = :customer_list,
-                    customer_add = :customer_add,
-                    customer_import = :customer_import,
+                    customers_list = :customers_list,
+                    customers_add = :customers_add,
+                    customers_import = :customers_import,
                     invoice_page = :invoice_page,
                     invoice_view = :invoice_view,
                     invoice_payment = :invoice_payment,
                     invoice_prorate = :invoice_prorate,
                     invoice_payment_add = :invoice_payment_add,
-                    plan_page = :plan_page,
+                    plans_page = :plans_page,
                     plan_view = :plan_view,
                     ticket_page = :ticket_page,
                     ticket_active = :ticket_active,
                     ticket_pending = :ticket_pending,
                     ticket_invalid = :ticket_invalid,
-                    admin_page = :admin_page,
+                    admins_page = :admins_page,
                     admin_view = :admin_view';
 
             $stmt = $this->conn->prepare($query);
@@ -120,9 +120,9 @@
             $stmt->bindParam(':user_id', $this->user_id);
 
             $stmt->bindParam(':customer_page', $this->customer_page);
-            $stmt->bindParam(':customer_list', $this->customer_list);
-            $stmt->bindParam(':customer_add', $this->customer_add);
-            $stmt->bindParam(':customer_import', $this->customer_import);
+            $stmt->bindParam(':customers_list', $this->customers_list);
+            $stmt->bindParam(':customers_add', $this->customers_add);
+            $stmt->bindParam(':customers_import', $this->customers_import);
 
             $stmt->bindParam(':invoice_page', $this->invoice_page);
             $stmt->bindParam(':invoice_view', $this->invoice_view);
@@ -130,7 +130,7 @@
             $stmt->bindParam(':invoice_prorate', $this->invoice_prorate);
             $stmt->bindParam(':invoice_payment_add', $this->invoice_payment_add);
 
-            $stmt->bindParam(':plan_page', $this->plan_page);
+            $stmt->bindParam(':plans_page', $this->plans_page);
             $stmt->bindParam(':plan_view', $this->plan_view);
 
             $stmt->bindParam(':ticket_page', $this->ticket_page);
@@ -138,7 +138,7 @@
             $stmt->bindParam(':ticket_pending', $this->ticket_pending);
             $stmt->bindParam(':ticket_invalid', $this->ticket_invalid);
 
-            $stmt->bindParam(':admin_page', $this->admin_page);
+            $stmt->bindParam(':admins_page', $this->admins_page);
             $stmt->bindParam(':admin_view', $this->admin_view);
 
             try {
@@ -153,21 +153,21 @@
         public function update_pages_restriction () {
             $query = 'UPDATE restrict_pages 
                 SET customer_page = :customer_page,
-                    customer_list = :customer_list,
-                    customer_add = :customer_add,
-                    customer_import = :customer_import,
+                    customers_list = :customers_list,
+                    customers_add = :customers_add,
+                    customers_import = :customers_import,
                     invoice_page = :invoice_page,
                     invoice_view = :invoice_view,
                     invoice_payment = :invoice_payment,
                     invoice_prorate = :invoice_prorate,
                     invoice_payment_add = :invoice_payment_add,
-                    plan_page = :plan_page,
+                    plans_page = :plans_page,
                     plan_view = :plan_view,
                     ticket_page = :ticket_page,
                     ticket_active = :ticket_active,
                     ticket_pending = :ticket_pending,
                     ticket_invalid = :ticket_invalid,
-                    admin_page = :admin_page,
+                    admins_page = :admins_page,
                     admin_view = :admin_view
              WHERE user_id = :user_id';
 
@@ -179,9 +179,9 @@
             $stmt->bindParam(':user_id', $this->user_id);
 
             $stmt->bindParam(':customer_page', $this->customer_page);
-            $stmt->bindParam(':customer_list', $this->customer_list);
-            $stmt->bindParam(':customer_add', $this->customer_add);
-            $stmt->bindParam(':customer_import', $this->customer_import);
+            $stmt->bindParam(':customers_list', $this->customers_list);
+            $stmt->bindParam(':customers_add', $this->customers_add);
+            $stmt->bindParam(':customers_import', $this->customers_import);
 
             $stmt->bindParam(':invoice_page', $this->invoice_page);
             $stmt->bindParam(':invoice_view', $this->invoice_view);
@@ -189,7 +189,7 @@
             $stmt->bindParam(':invoice_prorate', $this->invoice_prorate);
             $stmt->bindParam(':invoice_payment_add', $this->invoice_payment_add);
 
-            $stmt->bindParam(':plan_page', $this->plan_page);
+            $stmt->bindParam(':plans_page', $this->plans_page);
             $stmt->bindParam(':plan_view', $this->plan_view);
 
             $stmt->bindParam(':ticket_page', $this->ticket_page);
@@ -197,7 +197,7 @@
             $stmt->bindParam(':ticket_pending', $this->ticket_pending);
             $stmt->bindParam(':ticket_invalid', $this->ticket_invalid);
 
-            $stmt->bindParam(':admin_page', $this->admin_page);
+            $stmt->bindParam(':admins_page', $this->admins_page);
             $stmt->bindParam(':admin_view', $this->admin_view);
 
             try {
@@ -348,16 +348,16 @@
 
         private function setPagesRestrictions() {
             // Customer Page Restrictions
-            $this->customer_list = htmlspecialchars(strip_tags($this->customer_list));
-            if ($this->customer_list == 1) {
+            $this->customers_list = htmlspecialchars(strip_tags($this->customers_list));
+            if ($this->customers_list == 1) {
                 $this->customer_page = 1;
-                $this->customer_add = htmlspecialchars(strip_tags($this->customer_add));
-                ($this->customer_add == 1) ? $this->customer_import = 1 : $this->customer_import = 0;
+                $this->customers_add = htmlspecialchars(strip_tags($this->customers_add));
+                ($this->customers_add == 1) ? $this->customers_import = 1 : $this->customers_import = 0;
             }
             else {
                 $this->customer_page = 0;
-                $this->customer_add = 0;
-                $this->customer_import = 0;
+                $this->customers_add = 0;
+                $this->customers_import = 0;
             }
 
             // Invoice Page Restrictions
@@ -379,10 +379,10 @@
             // Plans Page Restrictions
             $this->plan_view = htmlspecialchars(strip_tags($this->plan_view));
             if ($this->plan_view == 1) {
-                $this->plan_page = 1;
+                $this->plans_page = 1;
             }
             else {
-                $this->plan_page = 0;
+                $this->plans_page = 0;
             }
 
             // Tickets Page Restrictions
@@ -400,7 +400,7 @@
 
             // Admins Page Restrictions
             $this->admin_view = htmlspecialchars(strip_tags($this->admin_view));
-            ($this->admin_view == 1) ? $this->admin_page = 1 : $this->admin_page = 0;
+            ($this->admin_view == 1) ? $this->admins_page = 1 : $this->admins_page = 0;
         }
 
         private function setButtonsRestrictions() {
