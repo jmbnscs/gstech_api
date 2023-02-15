@@ -2,10 +2,10 @@
     class Database 
     {
         // DB Params
-        private $host = 'localhost:3307';
-        private $db_name = 'bms';
-        private $username = 'root';
-        private $password = '';
+        private $host = 'localhost';
+        private $db_name = 'u575223139_bms';
+        private $username = 'u575223139_finalsbms';
+        private $password = '[atFeP2nN';
         private $conn;
 
         // DB Connect
